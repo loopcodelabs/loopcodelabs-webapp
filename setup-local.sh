@@ -17,6 +17,16 @@ MAGENTA='\033[0;35m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
+# ------------------------------------------------------------------------------
+# Default Database Configuration
+# ------------------------------------------------------------------------------
+
+DB_HOST="172.29.16.1"
+DB_PORT="3306"
+DB_USER="loopcodedevuser"
+DB_PASSWORD="LoopCodeDevPassword123!"
+DB_NAME="loopcodelabs_dev"
+
 # --- LOGGING SETUP ---
 LOG_DIR="logs"
 mkdir -p "$LOG_DIR"
@@ -136,11 +146,11 @@ SESSION_SECRET="$SESS_SEC"
 COOKIE_SECRET="$COOKIE_SEC"
 
 # Database Configuration (MySQL)
-DB_HOST="localhost"
-DB_PORT=3306
-DB_USER="loopcodelabs_user"
-DB_PASSWORD="LoopCodeDevPassword123!"
-DB_NAME="loopcodelabs_dev"
+DB_HOST="$DB_HOST"
+DB_PORT="$DB_PORT"
+DB_USER="$DB_USER"
+DB_PASSWORD="$DB_PASSWORD"
+DB_NAME="$DB_NAME"
 
 # Google & Optional API Keys
 GEMINI_API_KEY=""
@@ -156,21 +166,120 @@ EOF
 }
 
 create_env_file ".env" "development"
-create_env_file ".env.dev" "development"
 create_env_file ".env.stage" "staging"
 create_env_file ".env.prod" "production"
 
-# --- STEP 5 & 6 & 7: MYSQL DATABASE SETUP & SCHEMA MIGRATION ---
+# --- STEP 5,6 & 7: MYSQL DATABASE SETUP & SCHEMA MIGRATION ---
 echo -e "\n${BLUE}[Step 5/14] Provisioning MySQL Database & Running Migrations...${NC}"
 
-# If local MySQL server is active, execute database creation and migrations
-if command -v mysql &> /dev/null && mysqladmin ping -h localhost --silent 2>/dev/null; then
-    echo -e "${GREEN}✓ Active MySQL server detected locally. Executing schema & seeds...${NC}"
-    mysql -u root -e "CREATE DATABASE IF NOT EXISTS loopcodelabs_dev DEFAULT CHARACTER SET utf8mb4;" 2>/dev/null || true
-    mysql -u root loopcodelabs_dev < scripts/schema.sql 2>/dev/null || echo -e "${YELLOW}  Notice: Standard schema execution completed or partially loaded.${NC}"
-    mysql -u root loopcodelabs_dev < scripts/seed.sql 2>/dev/null || echo -e "${YELLOW}  Notice: Standard seed execution completed or partially loaded.${NC}"
+# ------------------------------------------------------------------------------
+# Load environment variables from .env
+# ------------------------------------------------------------------------------
+
+if [ -f ".env" ]; then
+    set -a
+    source .env
+    set +a
+    echo -e "${GREEN}✓ Loaded database configuration from .env${NC}"
 else
-    echo -e "${YELLOW}✓ Local MySQL daemon is not running. Application will use live in-memory store synchronized with MySQL database when connected.${NC}"
+    echo -e "${RED}✗ .env file not found. Cannot continue database setup.${NC}"
+    exit 1
+fi
+
+# Remove any Windows carriage returns (CRLF protection)
+DB_HOST=$(echo "$DB_HOST" | tr -d '\r')
+DB_PORT=$(echo "$DB_PORT" | tr -d '\r')
+DB_USER=$(echo "$DB_USER" | tr -d '\r')
+DB_PASSWORD=$(echo "$DB_PASSWORD" | tr -d '\r')
+DB_NAME=$(echo "$DB_NAME" | tr -d '\r')
+
+echo -e "${CYAN}Database Configuration:${NC}"
+echo " Host     : $DB_HOST"
+echo " Port     : $DB_PORT"
+echo " User     : $DB_USER"
+echo " Database : $DB_NAME"
+
+# ------------------------------------------------------------------------------
+# Validate required variables
+# ------------------------------------------------------------------------------
+
+missing=false
+
+for var in DB_HOST DB_PORT DB_USER DB_PASSWORD DB_NAME; do
+    if [ -z "${!var}" ]; then
+        echo -e "${RED}✗ Missing environment variable: $var${NC}"
+        missing=true
+    fi
+done
+
+if [ "$missing" = true ]; then
+    echo -e "${RED}Database configuration is incomplete.${NC}"
+    exit 1
+fi
+
+# ------------------------------------------------------------------------------
+# Verify MySQL Client
+# ------------------------------------------------------------------------------
+
+if ! command -v mysql >/dev/null 2>&1; then
+    echo -e "${YELLOW}✓ MySQL client is not installed. Skipping database initialization.${NC}"
+    echo -e "${YELLOW}Application will use analyticsStore.ts for local development.${NC}"
+else
+
+    echo -e "${CYAN}Checking MySQL connectivity...${NC}"
+
+    if MYSQL_PWD="$DB_PASSWORD" mysqladmin \
+        -h "$DB_HOST" \
+        -P "$DB_PORT" \
+        -u "$DB_USER" \
+        ping --silent >/dev/null 2>&1; then
+
+        echo -e "${GREEN}✓ MySQL server detected.${NC}"
+
+        echo -e "${CYAN}Creating database if it does not exist...${NC}"
+
+        MYSQL_PWD="$DB_PASSWORD" mysql \
+            -h "$DB_HOST" \
+            -P "$DB_PORT" \
+            -u "$DB_USER" \
+            -e "CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+        echo -e "${GREEN}✓ Database ready.${NC}"
+
+        if [ -f "scripts/schema.sql" ]; then
+            echo -e "${CYAN}Executing schema.sql...${NC}"
+
+            MYSQL_PWD="$DB_PASSWORD" mysql \
+                -h "$DB_HOST" \
+                -P "$DB_PORT" \
+                -u "$DB_USER" \
+                "$DB_NAME" < scripts/schema.sql
+
+            echo -e "${GREEN}✓ Schema imported.${NC}"
+        else
+            echo -e "${YELLOW}schema.sql not found. Skipping.${NC}"
+        fi
+
+        if [ -f "scripts/seed.sql" ]; then
+            echo -e "${CYAN}Executing seed.sql...${NC}"
+
+            MYSQL_PWD="$DB_PASSWORD" mysql \
+                -h "$DB_HOST" \
+                -P "$DB_PORT" \
+                -u "$DB_USER" \
+                "$DB_NAME" < scripts/seed.sql
+
+            echo -e "${GREEN}✓ Seed data imported.${NC}"
+        else
+            echo -e "${YELLOW}seed.sql not found. Skipping.${NC}"
+        fi
+
+        echo -e "${GREEN}${BOLD}✓ MySQL initialization completed successfully.${NC}"
+
+    else
+        echo -e "${YELLOW}✓ Unable to connect to MySQL server at ${DB_HOST}:${DB_PORT}.${NC}"
+        echo -e "${YELLOW}Application will use analyticsStore.ts for local development.${NC}"
+    fi
 fi
 
 # --- STEP 8 & 9: ANALYTICS INITIALIZATION & DATA STORE ---
