@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Primary Landing Page -->
+  <url>
+    <loc>https://loopcodelabs.in/</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Deep Link Section: Services -->
+  <url>
+    <loc>https://loopcodelabs.in/#services</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: Website Development -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/website-development</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: Web Design -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/web-design</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: SEO -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/seo</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: Automation -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/automation</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: Digital Marketing -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/digital-marketing</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: App Development -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/app-development</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Landing Page: Branding -->
+  <url>
+    <loc>https://loopcodelabs.in/#services/branding</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Deep Link Section: Portfolio Work -->
+  <url>
+    <loc>https://loopcodelabs.in/#work</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Dynamic Insights Blog Hub -->
+  <url>
+    <loc>https://loopcodelabs.in/#blog</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

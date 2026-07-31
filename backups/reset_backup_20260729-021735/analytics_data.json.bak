@@ -1,0 +1,299 @@
+{
+  "visitors": [
+    {
+      "visitorId": "v_hyd_9011",
+      "firstVisit": "2026-07-26T02:03:03.433Z",
+      "lastActivity": "2026-07-29T02:01:03.433Z",
+      "ipAddress": "103.211.52.12",
+      "country": "India",
+      "state": "Telangana",
+      "city": "Hyderabad",
+      "timeZone": "Asia/Kolkata",
+      "browser": "Chrome",
+      "browserVersion": "126.0",
+      "deviceType": "Desktop",
+      "os": "Windows 11",
+      "screenResolution": "1920x1080",
+      "language": "en-US",
+      "initialReferrer": "Google",
+      "utmSource": "google",
+      "utmMedium": "cpc",
+      "utmCampaign": "ai_development_in",
+      "landingPage": "/",
+      "currentUrl": "/services/ai-development",
+      "exitPage": "/contact",
+      "totalSessions": 3
+    },
+    {
+      "visitorId": "v_blr_4420",
+      "firstVisit": "2026-07-27T02:03:03.433Z",
+      "lastActivity": "2026-07-29T01:55:33.433Z",
+      "ipAddress": "49.207.19.88",
+      "country": "India",
+      "state": "Karnataka",
+      "city": "Bengaluru",
+      "timeZone": "Asia/Kolkata",
+      "browser": "Safari",
+      "browserVersion": "17.4",
+      "deviceType": "Mobile",
+      "os": "iOS 17",
+      "screenResolution": "393x852",
+      "language": "en-IN",
+      "initialReferrer": "LinkedIn",
+      "landingPage": "/services/web-development",
+      "currentUrl": "/pricing",
+      "exitPage": "/pricing",
+      "totalSessions": 2
+    },
+    {
+      "visitorId": "v_sf_1092",
+      "firstVisit": "2026-07-28T02:03:03.433Z",
+      "lastActivity": "2026-07-29T02:02:03.433Z",
+      "ipAddress": "172.56.21.9",
+      "country": "United States",
+      "state": "California",
+      "city": "San Francisco",
+      "timeZone": "America/Los_Angeles",
+      "browser": "Chrome",
+      "browserVersion": "125.0",
+      "deviceType": "Desktop",
+      "os": "macOS Sonoma",
+      "screenResolution": "2560x1440",
+      "language": "en-US",
+      "initialReferrer": "Direct",
+      "landingPage": "/",
+      "currentUrl": "/",
+      "exitPage": "/",
+      "totalSessions": 1
+    },
+    {
+      "visitorId": "v_mumbai_3301",
+      "firstVisit": "2026-07-29T01:33:03.433Z",
+      "lastActivity": "2026-07-29T02:02:53.433Z",
+      "ipAddress": "115.112.78.4",
+      "country": "India",
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "timeZone": "Asia/Kolkata",
+      "browser": "Edge",
+      "browserVersion": "124.0",
+      "deviceType": "Desktop",
+      "os": "Windows 11",
+      "screenResolution": "1920x1080",
+      "language": "en-US",
+      "initialReferrer": "Google",
+      "landingPage": "/",
+      "currentUrl": "/services/mobile-app-development",
+      "exitPage": "/contact",
+      "totalSessions": 1
+    }
+  ],
+  "sessions": [
+    {
+      "sessionId": "s_hyd_9011_3",
+      "visitorId": "v_hyd_9011",
+      "startTime": "2026-07-29T01:33:03.433Z",
+      "lastActiveTime": "2026-07-29T02:01:03.433Z",
+      "durationSeconds": 1680,
+      "pagesVisited": 4,
+      "landingPage": "/",
+      "exitPage": "/contact",
+      "trafficSource": "Paid Campaign",
+      "referrer": "Google Ads",
+      "device": "Desktop",
+      "browser": "Chrome",
+      "country": "India",
+      "city": "Hyderabad",
+      "bounce": false,
+      "pageViews": [
+        {
+          "id": "pv_1",
+          "sessionId": "s_hyd_9011_3",
+          "visitorId": "v_hyd_9011",
+          "pageTitle": "LoopCodeLabs - AI & Web Agency",
+          "urlPath": "/",
+          "entryTime": "2026-07-29T01:33:03.433Z",
+          "timeSpentSeconds": 120,
+          "scrollPercentage": 85,
+          "clicksCount": 4
+        },
+        {
+          "id": "pv_2",
+          "sessionId": "s_hyd_9011_3",
+          "visitorId": "v_hyd_9011",
+          "pageTitle": "AI Applications & Agents",
+          "urlPath": "/services/ai-development",
+          "entryTime": "2026-07-29T01:35:03.433Z",
+          "timeSpentSeconds": 340,
+          "scrollPercentage": 100,
+          "clicksCount": 8
+        },
+        {
+          "id": "pv_3",
+          "sessionId": "s_hyd_9011_3",
+          "visitorId": "v_hyd_9011",
+          "pageTitle": "Project Estimator & Pricing",
+          "urlPath": "/pricing",
+          "entryTime": "2026-07-29T01:40:43.433Z",
+          "timeSpentSeconds": 220,
+          "scrollPercentage": 90,
+          "clicksCount": 5
+        },
+        {
+          "id": "pv_4",
+          "sessionId": "s_hyd_9011_3",
+          "visitorId": "v_hyd_9011",
+          "pageTitle": "Get in Touch | LoopCodeLabs",
+          "urlPath": "/contact",
+          "entryTime": "2026-07-29T01:44:23.433Z",
+          "timeSpentSeconds": 1000,
+          "scrollPercentage": 95,
+          "clicksCount": 3
+        }
+      ]
+    },
+    {
+      "sessionId": "s_mumbai_3301_1",
+      "visitorId": "v_mumbai_3301",
+      "startTime": "2026-07-29T01:53:03.433Z",
+      "lastActiveTime": "2026-07-29T02:02:53.433Z",
+      "durationSeconds": 590,
+      "pagesVisited": 2,
+      "landingPage": "/",
+      "exitPage": "/services/mobile-app-development",
+      "trafficSource": "Organic Search",
+      "referrer": "Google",
+      "device": "Desktop",
+      "browser": "Edge",
+      "country": "India",
+      "city": "Mumbai",
+      "bounce": false,
+      "pageViews": [
+        {
+          "id": "pv_10",
+          "sessionId": "s_mumbai_3301_1",
+          "visitorId": "v_mumbai_3301",
+          "pageTitle": "LoopCodeLabs - AI & Web Agency",
+          "urlPath": "/",
+          "entryTime": "2026-07-29T01:53:03.433Z",
+          "timeSpentSeconds": 180,
+          "scrollPercentage": 70,
+          "clicksCount": 3
+        },
+        {
+          "id": "pv_11",
+          "sessionId": "s_mumbai_3301_1",
+          "visitorId": "v_mumbai_3301",
+          "pageTitle": "Mobile App Development",
+          "urlPath": "/services/mobile-app-development",
+          "entryTime": "2026-07-29T01:56:03.433Z",
+          "timeSpentSeconds": 410,
+          "scrollPercentage": 95,
+          "clicksCount": 6
+        }
+      ]
+    }
+  ],
+  "pageViews": [],
+  "events": [
+    {
+      "id": "evt_1",
+      "eventName": "Hero CTA Click",
+      "timestamp": "2026-07-29T01:33:53.433Z",
+      "urlPath": "/",
+      "pageTitle": "LoopCodeLabs",
+      "visitorId": "v_hyd_9011",
+      "sessionId": "s_hyd_9011_3"
+    },
+    {
+      "id": "evt_2",
+      "eventName": "WhatsApp Button",
+      "timestamp": "2026-07-29T01:38:03.433Z",
+      "urlPath": "/services/ai-development",
+      "pageTitle": "AI Applications",
+      "visitorId": "v_hyd_9011",
+      "sessionId": "s_hyd_9011_3"
+    },
+    {
+      "id": "evt_3",
+      "eventName": "Book Consultation",
+      "timestamp": "2026-07-29T01:43:03.433Z",
+      "urlPath": "/pricing",
+      "pageTitle": "Pricing",
+      "visitorId": "v_hyd_9011",
+      "sessionId": "s_hyd_9011_3"
+    },
+    {
+      "id": "evt_4",
+      "eventName": "Submit Contact Form",
+      "timestamp": "2026-07-29T01:44:43.433Z",
+      "urlPath": "/contact",
+      "pageTitle": "Contact",
+      "visitorId": "v_hyd_9011",
+      "sessionId": "s_hyd_9011_3"
+    }
+  ],
+  "heatmaps": [],
+  "performanceLogs": [
+    {
+      "id": "perf_1",
+      "pageUrl": "/",
+      "timestamp": "2026-07-29T02:03:03.434Z",
+      "pageLoadTimeMs": 840,
+      "fcpMs": 420,
+      "lcpMs": 780,
+      "ttfbMs": 110
+    }
+  ],
+  "leads": [
+    {
+      "id": "lead_1001",
+      "visitorId": "v_hyd_9011",
+      "sessionId": "s_hyd_9011_3",
+      "submittedAt": "2026-07-29T01:44:43.433Z",
+      "name": "Rajesh Sharma",
+      "email": "rajesh.sharma@techventure.in",
+      "phone": "+91 98765 43210",
+      "company": "TechVenture Solutions",
+      "requirements": "Looking for a custom AI Agent & SaaS Workflow platform for our enterprise healthcare clients.",
+      "browsingHistory": [
+        {
+          "urlPath": "/",
+          "pageTitle": "LoopCodeLabs Home",
+          "timeSpentSeconds": 120,
+          "timestamp": "2026-07-29T01:33:03.433Z"
+        },
+        {
+          "urlPath": "/services/ai-development",
+          "pageTitle": "AI Applications",
+          "timeSpentSeconds": 340,
+          "timestamp": "2026-07-29T01:35:03.433Z"
+        },
+        {
+          "urlPath": "/pricing",
+          "pageTitle": "Estimate Calculator",
+          "timeSpentSeconds": 220,
+          "timestamp": "2026-07-29T01:40:43.433Z"
+        },
+        {
+          "urlPath": "/contact",
+          "pageTitle": "Contact Form",
+          "timeSpentSeconds": 1000,
+          "timestamp": "2026-07-29T01:44:23.433Z"
+        }
+      ],
+      "eventsTriggered": [
+        "Hero CTA Click",
+        "WhatsApp Button",
+        "Book Consultation",
+        "Submit Contact Form"
+      ]
+    }
+  ],
+  "integrations": {
+    "ga4MeasurementId": "G-EXAMPLE123",
+    "clarityProjectId": "clarity_xyz89",
+    "metaPixelId": "",
+    "searchConsoleToken": ""
+  }
+}

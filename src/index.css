@@ -1,0 +1,363 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-main: #030303;
+  --bg-alt: #0a0a0c;
+  --bg-card: #09090b;
+  --bg-soft: #121214;
+  --text-primary: #f3f4ed;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-inverse: #030303;
+  --border-color: #27272a;
+  --border-light: rgba(255,255,255,.05);
+  
+  --color-accent: #2BBAA5;
+  --color-accent-hover: #33d1ba;
+  --color-accent-active: #1D8576;
+  --color-accent-content: #030303;
+  
+  --color-secondary: #F9A822;
+  --color-danger: #F96635;
+  --color-success: #2BBAA5;
+  --color-soft-accent: rgba(43,186,165,.15);
+  --color-orange: #F9A822;
+
+  --zinc-950: #09090b;
+  --zinc-900: #18181b;
+  --zinc-800: #27272a;
+  --zinc-700: #3f3f46;
+  --zinc-600: #52525b;
+  --zinc-500: #71717a;
+  --zinc-400: #a1a1aa;
+  --zinc-300: #d4d4d8;
+  --zinc-200: #e4e4e7;
+  --zinc-100: #f4f4f5;
+  --text-white: #f3f4ed;
+  --true-white: #FFFFFF;
+  --true-black: #000000;
+}
+
+html.light {
+  --bg-main: #f8fafc;
+  --bg-alt: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-soft: #f1f5f9;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  --border-color: #cbd5e1;
+  --border-light: rgba(0,0,0,0.08);
+
+  --color-accent: #2BBAA5;
+  --color-accent-hover: #239B8A;
+  --color-accent-active: #1D8576;
+  --color-accent-content: #ffffff;
+
+  --color-secondary: #F9A822;
+  --color-danger: #F96635;
+  --color-success: #2BBAA5;
+  --color-soft-accent: rgba(43,186,165,0.12);
+  --color-orange: #F9A822;
+
+  --zinc-950: #ffffff;
+  --zinc-900: #e2e8f0;
+  --zinc-800: #cbd5e1;
+  --zinc-700: #94a3b8;
+  --zinc-600: #64748b;
+  --zinc-500: #475569;
+  --zinc-400: #334155;
+  --zinc-300: #1e293b;
+  --zinc-200: #0f172a;
+  --zinc-100: #020617;
+  --text-white: #0f172a;
+  --true-white: #ffffff;
+  --true-black: #000000;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque", sans-serif;
+  
+  --color-true-white: var(--true-white);
+  --color-true-black: var(--true-black);
+  
+  --color-zinc-950: var(--zinc-950);
+  --color-zinc-900: var(--zinc-900);
+  --color-zinc-800: var(--zinc-800);
+  --color-zinc-700: var(--zinc-700);
+  --color-zinc-600: var(--zinc-600);
+  --color-zinc-500: var(--zinc-500);
+  --color-zinc-400: var(--zinc-400);
+  --color-zinc-300: var(--zinc-300);
+  --color-zinc-200: var(--zinc-200);
+  --color-zinc-100: var(--zinc-100);
+  --color-white: var(--text-white);
+
+  --color-bg-alt: var(--bg-alt);
+  --color-bg-card: var(--bg-card);
+  --color-bg-soft: var(--bg-soft);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  
+  --color-border-color: var(--border-color);
+  --color-border-light: var(--border-light);
+  
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-active: var(--color-accent-active);
+  --color-accent-content: var(--color-accent-content);
+  
+  --color-secondary: var(--color-secondary);
+  --color-danger: var(--color-danger);
+  --color-success: var(--color-success);
+  --color-soft-accent: var(--color-soft-accent);
+  --color-orange: var(--color-orange);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--bg-main);
+  min-height: 100%;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-main);
+    color: var(--zinc-300);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading) !important;
+  }
+
+  /* Scoped smooth transitions to interactive and theme elements to prevent layout/style recalculation thrashing during scrolling */
+  body, button, a, input, select, textarea, [role="button"], .theme-transition {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #08080c;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Custom glow animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 10s infinite ease-in-out;
+}
+
+/* Marquee track animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 71s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee 71s linear infinite reverse;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.animate-marquee:hover, .animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Light theme marquee spans styling */
+html.light .animate-marquee span:first-of-type,
+html.light .animate-marquee-reverse span:first-of-type {
+  color: var(--zinc-500) !important;
+}
+
+html.light .animate-marquee span:first-of-type:hover,
+html.light .animate-marquee-reverse span:first-of-type:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Custom card shadow border mask */
+.glowing-card-border {
+  position: relative;
+}
+.glowing-card-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(to bottom right, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4), transparent);
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Radial noise background simulation */
+.grainy-bg {
+  background-image: radial-gradient(at 0% 0%, rgba(120, 119, 198, 0.08) 0, transparent 50%),
+                    radial-gradient(at 50% 0%, rgba(139, 92, 246, 0.05) 0, transparent 45%),
+                    radial-gradient(at 100% 50%, rgba(59, 130, 246, 0.08) 0, transparent 50%);
+}
+
+/* Hide native cursor on desktop to let custom premium cursor take over */
+@media (min-width: 1024px) {
+  html, body, a, button, input, select, textarea, [role="button"] {
+    cursor: none !important;
+  }
+}
+
+/* Custom process styling for dark theme (default is dark, i.e. when not inside html.light) */
+section#process #approach-left > span {
+  color: #2bbaa6 !important;
+}
+
+section#process #approach-left > p {
+  color: #2bbaa6 !important;
+}
+
+section#process #approach-left button {
+  background-color: #2bbaa6 !important;
+  color: #030303 !important; /* dark text for high contrast on bright teal bg */
+}
+
+section#process #approach-left button:hover {
+  background-color: #33d1ba !important;
+}
+
+section#process #approach-left button svg {
+  color: #030303 !important;
+}
+
+/* When light theme is active, we restore the original styles */
+html.light section#process #approach-left > span {
+  color: var(--zinc-500) !important;
+}
+
+html.light section#process #approach-left > p {
+  color: var(--zinc-600) !important;
+}
+
+html.light section#process #approach-left button {
+  background-color: var(--zinc-950) !important;
+  color: var(--text-white) !important;
+}
+
+html.light section#process #approach-left button:hover {
+  background-color: var(--zinc-900) !important;
+}
+
+html.light section#process #approach-left button svg {
+  color: var(--color-accent) !important;
+}
+
+/* Custom span styling under #lets-talk for dark theme */
+section#lets-talk span.font-mono {
+  color: var(--color-accent-content) !important;
+}
+
+/* Restore original 60% opacity style under light theme */
+html.light section#lets-talk span.font-mono {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Custom span and h2 styling under #about-values-section for dark theme */
+section#about-values-section > div:first-of-type > span {
+  color: #2bbaa6 !important;
+}
+
+section#about-values-section > div:first-of-type > h2 {
+  color: #ffffff !important;
+}
+
+/* Restore original styles under light theme */
+html.light section#about-values-section > div:first-of-type > span {
+  color: var(--text-muted) !important;
+}
+
+html.light section#about-values-section > div:first-of-type > h2 {
+  color: var(--text-primary) !important;
+}
+
+/* Custom span styling under #about-timeline-section for dark theme */
+section#about-timeline-section > div:first-of-type > span {
+  color: #2bbaa6 !important;
+}
+
+/* Restore original styles under light theme */
+html.light section#about-timeline-section > div:first-of-type > span {
+  color: var(--zinc-500) !important;
+}
+
+/* Custom timeline styling under light theme for outstanding readability */
+html.light section#about-timeline-section div.border-zinc-900 {
+  border-color: #D3CEBF !important;
+}
+
+html.light section#about-timeline-section div.bg-zinc-950.border-zinc-800 {
+  background-color: #FFFFFF !important;
+  border-color: #2BBAA5 !important;
+}
+
+html.light section#about-timeline-section span.bg-zinc-900 {
+  background-color: rgba(43, 186, 165, 0.08) !important;
+  border-color: rgba(43, 186, 165, 0.25) !important;
+  color: #168070 !important;
+}
+
+html.light section#about-timeline-section h2.text-white,
+html.light section#about-timeline-section h3.text-white {
+  color: #161616 !important;
+}
+
+html.light section#about-timeline-section p.text-zinc-400 {
+  color: #444444 !important;
+}
+
+

@@ -1,0 +1,106 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - dev
+  pull_request:
+    branches:
+      - main
+      - stage
+      - dev
+
+jobs:
+  validate:
+    name: Code Quality & Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter (TypeScript compilation check)
+        run: npm run lint
+
+      - name: Build Application
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+  deploy_dev:
+    name: Deploy to Development Environment
+    needs: validate
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # PLACEHOLDER: Replace this section with your hosting provider's deploy step
+      # Example: Google Cloud Run, AWS Elastic Beanstalk, Vercel, or custom VPS.
+      - name: Deploy to Dev
+        run: |
+          echo "Deploying to DEV Environment..."
+          echo "Connecting to Dev servers and synchronizing artifacts..."
+          # Insert your deployment actions here (e.g., gcloud, aws s3 sync, etc.)
+          echo "Dev Deployment successful!"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ENV_NAME: "development"
+
+  deploy_stage:
+    name: Deploy to Staging Environment
+    needs: validate
+    if: github.ref == 'refs/heads/stage' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: stage
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # PLACEHOLDER: Replace this section with your staging deploy steps
+      - name: Deploy to Stage
+        run: |
+          echo "Deploying to STAGE Environment..."
+          echo "Updating preview instances..."
+          # Insert staging deploy commands here
+          echo "Stage Deployment successful!"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ENV_NAME: "staging"
+
+  deploy_prod:
+    name: Deploy to Production Environment
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # PLACEHOLDER: Replace this section with your production deploy steps
+      - name: Deploy to Prod
+        run: |
+          echo "Deploying to PRODUCTION..."
+          echo "Initiating zero-downtime rolling update..."
+          # Insert production deployment commands here
+          echo "Production Deployment successful!"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ENV_NAME: "production"

@@ -1,0 +1,8 @@
+{
+  "name": "Remix loopcodelabs - AI Powered Business Solutions",
+  "description": "Get started with loopcodelabs to empower your business with AI-enabled digital transformation",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

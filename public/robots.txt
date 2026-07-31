@@ -1,0 +1,18 @@
+# robots.txt for loopCode Labs
+# Optimized for Google, Bing, DuckDuckGo, and Generative Search Engines (Gemini, ChatGPT)
+
+User-agent: *
+Allow: /
+
+# Specifically request AI crawlers to discover semantic entities
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap coordinates
+Sitemap: https://loopcodelabs.in/sitemap.xml
