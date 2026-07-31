@@ -26,7 +26,7 @@ async function startServer() {
         return res.json({ success: true, config: mysqlConfig, source: "mysql" });
       }
       const config = analyticsStore.getWebsiteConfig();
-      res.json({ success: true, config, source: "file" });
+      res.json({ success: true, config, source: "memory" });
     } catch (err: any) {
       const config = analyticsStore.getWebsiteConfig();
       res.json({ success: true, config, source: "fallback" });

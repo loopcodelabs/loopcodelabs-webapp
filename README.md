@@ -41,7 +41,7 @@ chmod +x setup-local.sh
 | :--- | :--- | :--- |
 | **Setup Local Environment** | `./setup-local.sh` | Full environment setup: validates OS/deps, generates `.env` files with secure secrets, creates storage directories, seeds database & analytics, builds frontend/backend assets. |
 | **Validate Environment** | `./validate-local.sh` | Runs 15+ automated health & schema integrity checks across tooling, config, DB schema, directories, compiled bundles, and API status. |
-| **Reset Environment & Data** | `./reset-local.sh` | Creates a timestamped backup in `backups/`, wipes build artifacts, resets database & `analytics_data.json` to clean initial seed data, and rebuilds assets. |
+| **Reset Environment & Data** | `./reset-local.sh` | Creates a timestamped backup in `backups/`, wipes build artifacts, resets database to clean initial seed data, and rebuilds assets. |
 
 ---
 
@@ -79,7 +79,7 @@ ALLOWED_EMAILS=""
 
 ## 🗄 Database Schema & Table Architecture
 
-The application includes an automated MySQL DDL schema (`scripts/schema.sql`) and a rich production-like dataset (`scripts/seed.sql` & `analytics_data.json`).
+The application includes an automated MySQL DDL schema (`scripts/schema.sql`) and a rich production-like dataset (`scripts/seed.sql`).
 
 ### Key Database Tables & Modules
 * **`users`**: Administrative and user account records (`id`, `uuid`, `email`, `password_hash`, `role_id`, `is_active`).
@@ -104,7 +104,6 @@ The application includes an automated MySQL DDL schema (`scripts/schema.sql`) an
 ├── setup-local.sh          # Primary automated setup script
 ├── validate-local.sh       # Local diagnostics & validation utility
 ├── reset-local.sh          # Database reset & data restore utility
-├── analytics_data.json     # Fast local JSON analytics data store
 ├── package.json            # Dependencies & npm scripts
 ├── server.ts               # Full-Stack Express API server entry point
 ├── scripts/
@@ -177,7 +176,7 @@ npm run build
   ```
 
 #### 2. "MySQL connection failed"
-* **Solution**: The application gracefully falls back to `analytics_data.json` for storage when MySQL is inactive. If you want MySQL, verify your local MySQL server is running: `sudo service mysql status` or `brew services start mysql`.
+* **Solution**: Verify your local MySQL server is running or configured in `.env`: `sudo service mysql status` or `brew services start mysql`.
 
 #### 3. "Permission denied executing setup-local.sh"
 * **Solution**: Grant execution permission: `chmod +x setup-local.sh validate-local.sh reset-local.sh`.

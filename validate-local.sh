@@ -66,7 +66,6 @@ done
 echo -e "\n${BOLD}4. Checking Data Stores & Schema Files:${NC}"
 if [ -f "scripts/schema.sql" ]; then log_pass "MySQL Schema DDL script (scripts/schema.sql) exists"; else log_fail "scripts/schema.sql missing"; fi
 if [ -f "scripts/seed.sql" ]; then log_pass "MySQL Seed data script (scripts/seed.sql) exists"; else log_fail "scripts/seed.sql missing"; fi
-if [ -f "analytics_data.json" ]; then log_pass "Analytics Data Store (analytics_data.json) present"; else log_fail "analytics_data.json missing"; fi
 
 # 5. Application Build Verification
 echo -e "\n${BOLD}5. Checking Build Artifacts:${NC}"

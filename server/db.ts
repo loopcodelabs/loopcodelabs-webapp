@@ -36,7 +36,7 @@ export async function getMySQLPool(): Promise<mysql.Pool | null> {
     return pool;
   } catch (err: any) {
     mysqlAvailable = false;
-    // Silent notice: local MySQL server is optional; store uses file-based JSON store if offline
+    // Silent notice: local MySQL server is optional; store uses live memory store if offline
     return null;
   }
 }
