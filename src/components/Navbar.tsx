@@ -13,6 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentHash, setCurrentHash] = useState(window.location.hash || "#");
 
@@ -24,11 +25,19 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
     const handleHashChange = () => {
       setCurrentHash(window.location.hash || "#");
     };
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("#user-account-dropdown")) {
+        setIsUserMenuOpen(false);
+      }
+    };
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("hashchange", handleHashChange);
+    document.addEventListener("click", handleClickOutside);
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("hashchange", handleHashChange);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -196,8 +205,13 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
             </button>
 
             {user ? (
-              <div className="relative group shrink-0">
-                <button className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 transition-all cursor-pointer">
+              <div className="relative shrink-0" id="user-account-dropdown">
+                <button 
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full bg-zinc-900/50 border border-zinc-800/80 hover:border-accent transition-all cursor-pointer"
+                  aria-expanded={isUserMenuOpen}
+                  aria-label="User menu"
+                >
                   <img 
                     src={user.picture} 
                     alt={user.name} 
@@ -208,23 +222,36 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
                 </button>
                 
                 {/* Dropdown menu */}
-                <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-950/95 border border-zinc-900 rounded-2xl p-3 shadow-xl backdrop-blur-xl opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
+                <div 
+                  className={`absolute right-0 top-full mt-2 w-52 bg-zinc-950 border border-zinc-800 rounded-2xl p-3 shadow-2xl backdrop-blur-xl transition-all duration-200 z-50 ${
+                    isUserMenuOpen 
+                      ? "opacity-100 translate-y-0 pointer-events-auto" 
+                      : "opacity-0 translate-y-1 pointer-events-none"
+                  }`}
+                >
                   <div className="text-left mb-2.5 pb-2 border-b border-zinc-900">
                     <p className="text-xs font-bold text-white truncate">{user.name}</p>
                     <p className="text-[10px] text-zinc-500 truncate">{user.email}</p>
                   </div>
                   <button
                     onClick={() => {
+                      setIsUserMenuOpen(false);
                       setIsOpen(false);
                       window.location.hash = "#admin";
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="w-full text-left py-1.5 px-2 rounded-lg text-xs font-semibold text-accent hover:bg-zinc-900 transition-all cursor-pointer mb-1"
+                    className="w-full text-left py-2 px-3 rounded-lg text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer mb-1 flex items-center justify-between"
                   >
-                    Admin Dashboard
+                    <span>Admin Dashboard</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={onLogout}
-                    className="w-full text-left py-1.5 px-2 rounded-lg text-xs font-semibold text-red-400 hover:bg-zinc-900 hover:text-red-300 transition-all cursor-pointer"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      setIsOpen(false);
+                      onLogout();
+                    }}
+                    className="w-full text-left py-2 px-3 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -318,8 +345,21 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
                   </div>
                   <button
                     onClick={() => {
+                      setIsOpen(false);
+                      setIsUserMenuOpen(false);
+                      window.location.hash = "#admin";
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="w-full py-3 rounded-full bg-accent/10 border border-accent/30 text-center text-xs font-bold text-accent uppercase tracking-widest hover:bg-accent hover:text-black transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>Admin Dashboard</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
                       onLogout();
                       setIsOpen(false);
+                      setIsUserMenuOpen(false);
                     }}
                     className="w-full py-3 rounded-full bg-zinc-900 border border-zinc-800 text-center text-xs font-bold text-red-400 uppercase tracking-widest hover:bg-zinc-850 transition-all cursor-pointer"
                   >
