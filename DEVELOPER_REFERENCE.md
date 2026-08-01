@@ -1,6 +1,6 @@
-# elite-digital-agency - Developer Reference Guide
+# elite-ai-enabled-digital-agency - Developer Reference Guide
 
-Welcome to the **elite-digital-agency** codebase. This comprehensive technical reference document serves as an onboarding guide for new developers, explaining the architecture, data flows, routing mechanics, component structures, and deployment pipelines.
+Welcome to the **elite-ai-enabled-digital-agency** codebase. This comprehensive technical reference document serves as an onboarding guide for new developers, explaining the architecture, data flows, routing mechanics, component structures, and deployment pipelines.
 
 ---
 
