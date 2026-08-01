@@ -7,24 +7,35 @@ let mysqlAvailable = false;
 export async function getMySQLPool(): Promise<mysql.Pool | null> {
   if (pool) return pool;
 
-  try {
-    const host = process.env.DB_HOST || "localhost";
-    const port = Number(process.env.DB_PORT) || 3306;
-    const user = process.env.DB_USER || "root";
-    const password = process.env.DB_PASSWORD || "";
-    const database = process.env.DB_NAME || "loopcodelabs_dev";
+  const host = process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST;
+  const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
 
-    const testPool = mysql.createPool({
-      host,
-      port,
-      user,
-      password,
-      database,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-      connectTimeout: 2000 // Quick timeout check
-    });
+  if (!host && !dbUrl) {
+    return null;
+  }
+
+  let testPool: mysql.Pool | null = null;
+  try {
+    const port = Number(process.env.DB_PORT || process.env.MYSQL_PORT) || 3306;
+    const user = process.env.DB_USER || process.env.MYSQL_USER || "root";
+    const password = process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD || "";
+    const database = process.env.DB_NAME || process.env.MYSQL_DATABASE || "loopcodelabs_dev";
+
+    if (dbUrl) {
+      testPool = mysql.createPool(dbUrl);
+    } else {
+      testPool = mysql.createPool({
+        host,
+        port,
+        user,
+        password,
+        database,
+        waitForConnections: true,
+        connectionLimit: 5,
+        queueLimit: 0,
+        connectTimeout: 2000
+      });
+    }
 
     const conn = await testPool.getConnection();
     conn.release();
@@ -34,7 +45,13 @@ export async function getMySQLPool(): Promise<mysql.Pool | null> {
     return pool;
   } catch (err: any) {
     mysqlAvailable = false;
-    // Silent notice: local MySQL server is optional; store uses live memory store if offline
+    if (testPool) {
+      try {
+        await testPool.end();
+      } catch (e) {
+        // ignore
+      }
+    }
     return null;
   }
 }

@@ -331,6 +331,31 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
 
   const redirectUri = getRedirectUri(req);
 
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.status(500).send(`
+      <html>
+        <head>
+          <title>OAuth Setup Required</title>
+          <style>
+            body { background: #09090b; color: #fff; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; }
+            .card { background: #18181b; border: 1px solid #27272a; padding: 32px; border-radius: 16px; max-width: 480px; text-align: center; }
+            h2 { color: #f43f5e; margin: 0 0 12px; }
+            p { color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+            code { background: #27272a; color: #2BBAA5; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+            .btn { display: inline-block; background: #27272a; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>Missing Google Credentials</h2>
+            <p>Please add <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> to your Vercel project's Environment Variables.</p>
+            <a href="/" class="btn">Return to Home</a>
+          </div>
+        </body>
+      </html>
+    `);
+  }
+
   try {
     // Exchange code for tokens
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -351,13 +376,20 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
     }
 
     const data = await tokenResponse.json();
+    if (!data.id_token) {
+      throw new Error("No id_token received from Google OAuth response.");
+    }
+
     const decoded: any = jwt.decode(data.id_token);
+    if (!decoded) {
+      throw new Error("Failed to decode Google ID token.");
+    }
     
     const profile = {
-      id: decoded.sub,
-      email: decoded.email,
-      name: decoded.name,
-      picture: decoded.picture
+      id: decoded.sub || "unknown",
+      email: decoded.email || "",
+      name: decoded.name || "User",
+      picture: decoded.picture || ""
     };
 
     // Check allowed emails restriction if ALLOWED_EMAILS or ADMIN_EMAILS environment variable is configured
@@ -638,7 +670,9 @@ async function startServer() {
   });
 }
 
-if (process.env.VERCEL !== "1") {
+const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV || process.env.NOW_REGION);
+
+if (!isVercel) {
   startServer();
 }
 
