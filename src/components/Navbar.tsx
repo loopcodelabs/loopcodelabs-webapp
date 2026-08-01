@@ -31,12 +31,19 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
         setIsUserMenuOpen(false);
       }
     };
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsUserMenuOpen(false);
+      }
+    };
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("resize", handleResize);
     document.addEventListener("click", handleClickOutside);
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("resize", handleResize);
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
@@ -205,56 +212,89 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
             </button>
 
             {user ? (
-              <div className="relative shrink-0" id="user-account-dropdown">
+              <div 
+                className="relative shrink-0" 
+                id="user-account-dropdown"
+                onMouseEnter={() => {
+                  if (window.innerWidth >= 768) setIsUserMenuOpen(true);
+                }}
+                onMouseLeave={() => {
+                  if (window.innerWidth >= 768) setIsUserMenuOpen(false);
+                }}
+              >
                 <button 
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full bg-zinc-900/50 border border-zinc-800/80 hover:border-accent transition-all cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth < 768) {
+                      // On mobile view, disable the user menu dropdown completely
+                      setIsUserMenuOpen(false);
+                      return;
+                    }
+                    setIsUserMenuOpen((prev) => !prev);
+                  }}
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800/90 hover:border-accent transition-all cursor-default md:cursor-pointer"
                   aria-expanded={isUserMenuOpen}
                   aria-label="User menu"
                 >
                   <img 
                     src={user.picture} 
                     alt={user.name} 
-                    className="w-5 h-5 rounded-full object-cover border border-zinc-800" 
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-zinc-800" 
                     referrerPolicy="no-referrer"
                   />
-                  <span className="text-xs font-semibold text-zinc-300 hidden md:inline-block max-w-[80px] truncate">{user.name}</span>
+                  <span className="text-xs font-semibold text-zinc-300 hidden md:inline-block max-w-[90px] truncate">{user.name}</span>
                 </button>
                 
-                {/* Dropdown menu */}
+                {/* Dropdown menu (Desktop only) */}
                 <div 
-                  className={`absolute right-0 top-full mt-2 w-52 bg-zinc-950 border border-zinc-800 rounded-2xl p-3 shadow-2xl backdrop-blur-xl transition-all duration-200 z-50 ${
+                  className={`hidden md:block absolute right-0 top-full pt-2 w-56 transition-all duration-200 z-50 ${
                     isUserMenuOpen 
-                      ? "opacity-100 translate-y-0 pointer-events-auto" 
-                      : "opacity-0 translate-y-1 pointer-events-none"
+                      ? "opacity-100 translate-y-0 pointer-events-auto scale-100" 
+                      : "opacity-0 -translate-y-2 pointer-events-none scale-95"
                   }`}
                 >
-                  <div className="text-left mb-2.5 pb-2 border-b border-zinc-900">
-                    <p className="text-xs font-bold text-white truncate">{user.name}</p>
-                    <p className="text-[10px] text-zinc-500 truncate">{user.email}</p>
+                  <div className="bg-zinc-950/95 border border-zinc-800/90 rounded-2xl p-3.5 shadow-2xl backdrop-blur-2xl">
+                    <div className="text-left mb-3 pb-2.5 border-b border-zinc-800/80 px-1">
+                      <div className="flex items-center gap-2.5">
+                        <img 
+                          src={user.picture} 
+                          alt={user.name} 
+                          className="w-8 h-8 rounded-full object-cover border border-zinc-700 shrink-0"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                          <p className="text-[10px] text-zinc-400 truncate">{user.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          setIsOpen(false);
+                          window.location.hash = "#admin";
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="w-full text-left py-2.5 px-3 rounded-xl text-xs font-bold text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 transition-all cursor-pointer flex items-center justify-between group"
+                      >
+                        <span>Admin Dashboard</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          setIsOpen(false);
+                          onLogout();
+                        }}
+                        className="w-full text-left py-2.5 px-3 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer flex items-center justify-between"
+                      >
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      setIsOpen(false);
-                      window.location.hash = "#admin";
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="w-full text-left py-2 px-3 rounded-lg text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer mb-1 flex items-center justify-between"
-                  >
-                    <span>Admin Dashboard</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      setIsOpen(false);
-                      onLogout();
-                    }}
-                    className="w-full text-left py-2 px-3 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
                 </div>
               </div>
             ) : (
@@ -284,7 +324,12 @@ export default function Navbar({ theme, toggleTheme, user, onLogin, onLogout }: 
 
             {/* Mobile Menu Toggle */}
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                setIsOpen((prev) => {
+                  if (!prev) setIsUserMenuOpen(false);
+                  return !prev;
+                });
+              }}
               className="md:hidden flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-zinc-800/40 bg-zinc-950/30 backdrop-blur-md text-zinc-400 hover:text-white hover:border-zinc-700 transition-all cursor-pointer shrink-0"
               aria-label="Toggle Menu"
               id="mobile-menu-toggle"

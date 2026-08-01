@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function CustomCursor() {
   const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
@@ -20,10 +21,22 @@ export default function CustomCursor() {
   useEffect(() => {
     let rafId: number | null = null;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      let x = -100;
+      let y = -100;
+      if ("touches" in e && e.touches.length > 0) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+      } else if ("clientX" in e) {
+        x = (e as MouseEvent).clientX;
+        y = (e as MouseEvent).clientY;
+      } else {
+        return;
+      }
+
+      setIsVisible(true);
+
       if (rafId !== null) return;
-      const x = e.clientX;
-      const y = e.clientY;
       rafId = requestAnimationFrame(() => {
         mouseX.set(x);
         mouseY.set(y);
@@ -39,21 +52,32 @@ export default function CustomCursor() {
       setIsHovered((prev) => (prev !== isClickable ? isClickable : prev));
     };
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    const handleMouseLeave = () => {
+      setIsVisible(false);
+    };
+
+    window.addEventListener("mousemove", handlePointerMove, { passive: true });
+    window.addEventListener("touchstart", handlePointerMove, { passive: true });
+    window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    document.addEventListener("mouseleave", handleMouseLeave);
     
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("touchstart", handlePointerMove);
+      window.removeEventListener("touchmove", handlePointerMove);
       window.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [mouseX, mouseY]);
 
   return (
     <>
-      {/* Magnetic mouse follower - extremely premium feel */}
+      {/* Magnetic mouse follower - extremely premium feel across mobile and desktop */}
       <motion.div
         animate={{
+          opacity: isVisible ? 1 : 0,
           scale: isHovered ? 1.7 : 1,
           backgroundColor: isHovered ? "rgba(43, 186, 165, 0.15)" : "rgba(43, 186, 165, 0)",
           borderColor: isHovered ? "var(--color-accent)" : "rgba(255, 255, 255, 0.2)",
@@ -72,6 +96,7 @@ export default function CustomCursor() {
       {/* Custom dot cursor - zero lag, highly responsive */}
       <motion.div
         animate={{
+          opacity: isVisible ? 1 : 0,
           scale: isHovered ? 1.3 : 1,
           backgroundColor: "var(--color-accent)",
           boxShadow: isHovered 

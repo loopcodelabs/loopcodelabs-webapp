@@ -349,7 +349,7 @@ export default function App() {
 
       {/* Universal ambient gradients for the entire background */}
       <div className="absolute top-0 inset-x-0 h-[600px] bg-gradient-to-b from-purple-950/15 via-blue-950/5 to-transparent pointer-events-none z-0 dark:opacity-100 opacity-30 transition-opacity duration-300" />
-      {(!currentHash.startsWith("#services") && !currentHash.startsWith("#portfolio/") && !currentHash.startsWith("#blog") && currentHash !== "#pricing") && (
+      {(currentHash === "#" || currentHash === "" || currentHash === "#work" || currentHash === "#process" || currentHash === "#contact" || currentHash === "#faq") && (
         <div className="absolute top-[2500px] left-0 right-0 h-[800px] bg-gradient-to-t from-purple-950/5 via-teal-950/5 to-transparent pointer-events-none z-0 dark:opacity-100 opacity-30 transition-opacity duration-300" />
       )}
 
@@ -362,7 +362,7 @@ export default function App() {
         onLogout={logout}
       />
       {renderContent()}
-      <Footer />
+      {currentHash !== "#admin" && <Footer />}
 
       {/* Floating WhatsApp Smart Chat Widget */}
       <WhatsAppWidget />

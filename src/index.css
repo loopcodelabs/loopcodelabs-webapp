@@ -246,7 +246,7 @@ html.light .animate-marquee-reverse span:first-of-type:hover {
                     radial-gradient(at 100% 50%, rgba(59, 130, 246, 0.08) 0, transparent 50%);
 }
 
-/* Hide native cursor on desktop to let custom premium cursor take over */
+/* Hide native cursor on desktop so custom cursor takes over */
 @media (min-width: 1024px) {
   html, body, a, button, input, select, textarea, [role="button"] {
     cursor: none !important;
