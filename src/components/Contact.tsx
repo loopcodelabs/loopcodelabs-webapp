@@ -214,7 +214,7 @@ export default function Contact() {
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message / Brief *</label>
+                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message Brief *</label>
                     <textarea
                       id="contact-message"
                       required
