@@ -8,17 +8,17 @@ export function loadEnv(): void {
   if (loaded) return;
   loaded = true;
 
-  const nodeEnv = process.env.NODE_ENV || "development";
+  const mode = (process.env.APP_ENV || process.env.NODE_ENV || "development").toLowerCase();
 
-  // Files to load in order from baseline to stage/env specific
-  const filesToLoad: string[] = [".env", ".env.local"];
+  // Baseline files
+  const filesToLoad: string[] = [".env"];
 
-  if (nodeEnv) {
-    if (nodeEnv === "staging" || nodeEnv === "stage") {
-      filesToLoad.push(".env.stage", ".env.staging", ".env.stage.local", ".env.staging.local");
-    } else {
-      filesToLoad.push(`.env.${nodeEnv}`, `.env.${nodeEnv}.local`);
-    }
+  if (mode === "stage" || mode === "staging") {
+    filesToLoad.push(".env.stage", ".env.staging", ".env.stage.local");
+  } else if (mode === "prod" || mode === "production") {
+    filesToLoad.push(".env.prod", ".env.production", ".env.prod.local");
+  } else {
+    filesToLoad.push(".env.dev", ".env.development", ".env.local");
   }
 
   const loadedFiles: string[] = [];
@@ -34,7 +34,7 @@ export function loadEnv(): void {
   }
 
   if (loadedFiles.length > 0) {
-    console.log(`[Env] Loaded environment configuration from: ${loadedFiles.join(", ")} (NODE_ENV=${nodeEnv})`);
+    console.log(`[Env] Loaded environment configuration from: ${loadedFiles.join(", ")} (mode=${mode})`);
   }
 }
 
