@@ -3,9 +3,15 @@ import "./env";
 
 let pool: mysql.Pool | null = null;
 let mysqlAvailable = false;
+let dbFailedUntil = 0;
 
 export async function getMySQLPool(): Promise<mysql.Pool | null> {
   if (pool) return pool;
+
+  // If database connection failed recently, don't attempt reconnect for 30s
+  if (Date.now() < dbFailedUntil) {
+    return null;
+  }
 
   const host = process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST;
   const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
@@ -31,26 +37,28 @@ export async function getMySQLPool(): Promise<mysql.Pool | null> {
         password,
         database,
         waitForConnections: true,
-        connectionLimit: 5,
+        connectionLimit: 3,
         queueLimit: 0,
-        connectTimeout: 2000
+        connectTimeout: 1500
       });
     }
 
-    const conn = await testPool.getConnection();
+    const connPromise = testPool.getConnection();
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Database connection timeout")), 1500)
+    );
+
+    const conn = await Promise.race([connPromise, timeoutPromise]);
     conn.release();
     pool = testPool;
     mysqlAvailable = true;
-    console.log(`[MySQL] Successfully connected to database: ${database} on ${host}:${port}`);
+    console.log(`[MySQL] Successfully connected to database: ${database}`);
     return pool;
   } catch (err: any) {
     mysqlAvailable = false;
+    dbFailedUntil = Date.now() + 30000;
     if (testPool) {
-      try {
-        await testPool.end();
-      } catch (e) {
-        // ignore
-      }
+      testPool.end().catch(() => {});
     }
     return null;
   }
