@@ -61,10 +61,10 @@ export function isMySQLAvailable(): boolean {
 }
 
 export async function loadConfigFromMySQL(): Promise<any | null> {
-  const p = await getMySQLPool();
-  if (!p) return null;
-
   try {
+    const p = await getMySQLPool();
+    if (!p) return null;
+
     const [rows]: any = await p.query("SELECT setting_key, setting_value FROM website_settings");
     if (!rows || rows.length === 0) return null;
 
@@ -169,10 +169,10 @@ async function _executeSaveConfigToMySQL(config: any): Promise<boolean> {
 }
 
 export async function loadAnalyticsFromMySQL(): Promise<any | null> {
-  const p = await getMySQLPool();
-  if (!p) return null;
-
   try {
+    const p = await getMySQLPool();
+    if (!p) return null;
+
     const [visitorRows]: any = await p.query("SELECT * FROM visitors").catch(() => [null]);
     if (!visitorRows || !Array.isArray(visitorRows)) {
       return null;

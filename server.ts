@@ -550,20 +550,29 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
 
 // API Route: Get current user
 app.get("/api/auth/me", (req, res) => {
-  let token = req.headers.authorization?.split(" ")[1];
-  
-  if (!token && req.headers.cookie) {
-    const cookies = Object.fromEntries(
-      req.headers.cookie.split(";").map(c => c.trim().split("="))
-    );
-    token = cookies["session_token"];
-  }
-
-  if (!token) {
-    return res.status(401).json({ error: "Not authenticated" });
-  }
-
   try {
+    let token = req.headers.authorization?.split(" ")[1];
+    
+    if (!token && req.headers.cookie) {
+      try {
+        const cookieHeader = req.headers.cookie;
+        const cookieMap: Record<string, string> = {};
+        cookieHeader.split(";").forEach(c => {
+          const parts = c.trim().split("=");
+          if (parts.length >= 2) {
+            cookieMap[parts[0]] = parts.slice(1).join("=");
+          }
+        });
+        token = cookieMap["session_token"];
+      } catch (e) {
+        // ignore cookie parse errors
+      }
+    }
+
+    if (!token) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
     const jwtSecret = process.env.JWT_SECRET || "fallback_secret";
     const decoded: any = jwt.verify(token, jwtSecret);
 
@@ -580,9 +589,9 @@ app.get("/api/auth/me", (req, res) => {
       }
     }
 
-    res.json({ user: decoded });
-  } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
+    return res.json({ user: decoded });
+  } catch (err: any) {
+    return res.status(401).json({ error: "Invalid or expired session token" });
   }
 });
 
@@ -604,6 +613,15 @@ app.get("/google:gsc_id.html", (req, res) => {
   } else {
     res.status(404).send("Not Found");
   }
+});
+
+// Global API error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error("[Server Error]", err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500).json({ error: err?.message || "Internal server error" });
 });
 
 async function startServer() {
