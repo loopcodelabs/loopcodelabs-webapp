@@ -1,10 +1,10 @@
-import "./server/env";
+import "./server/env.js";
 import express from "express";
 import path from "path";
 import fs from "fs";
 import jwt from "jsonwebtoken";
-import { analyticsStore } from "./server/analyticsStore";
-import { loadConfigFromMySQL } from "./server/db";
+import { analyticsStore } from "./server/analyticsStore.js";
+import { loadConfigFromMySQL } from "./server/db.js";
 
 export const app = express();
 

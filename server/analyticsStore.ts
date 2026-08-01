@@ -1,6 +1,6 @@
 import path from "path";
-import { saveConfigToMySQL, loadConfigFromMySQL, saveAnalyticsToMySQL, loadAnalyticsFromMySQL } from "./db";
-import {
+import { saveConfigToMySQL, loadConfigFromMySQL, saveAnalyticsToMySQL, loadAnalyticsFromMySQL } from "./db.js";
+import type {
   VisitorRecord,
   SessionRecord,
   PageViewRecord,
