@@ -6,7 +6,7 @@
       "destination": "/api/index.ts"
     },
     {
-      "source": "/auth/callback",
+      "source": "/auth/callback(.*)",
       "destination": "/api/index.ts"
     },
     {
