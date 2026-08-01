@@ -7,14 +7,14 @@ import jwt from "jsonwebtoken";
 import { analyticsStore } from "./server/analyticsStore";
 import { loadConfigFromMySQL } from "./server/db";
 
+export const app = express();
+
+// Trust reverse proxy headers (crucial for Cloud Run, Vercel, and custom domains)
+app.set("trust proxy", true);
+app.use(express.json());
+
 async function startServer() {
-  const app = express();
-  const PORT = 3000;
-
-  // Trust reverse proxy headers (crucial for Cloud Run and custom domains)
-  app.set("trust proxy", true);
-
-  app.use(express.json());
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   // ==========================================
   // WEBSITE CONFIGURATION REST APIS
@@ -638,4 +638,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.env.VERCEL !== "1") {
+  startServer();
+}
