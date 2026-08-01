@@ -1,7 +1,5 @@
 import mysql from "mysql2/promise";
-import dotenv from "dotenv";
-
-dotenv.config();
+import "./env";
 
 let pool: mysql.Pool | null = null;
 let mysqlAvailable = false;
