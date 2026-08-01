@@ -247,6 +247,29 @@ const serviceMetadataMap: Record<string, {
   }
 };
 
+const slugToModuleMap: Record<string, string> = {
+  "website-development": "build",
+  "mobile-app-development": "build",
+  "ui-ux-design": "build",
+  "branding-strategy": "build",
+  "seo-services": "grow",
+  "digital-marketing": "grow",
+  "paid-advertising": "grow",
+  "email-marketing": "grow",
+  "lead-generation-automation": "grow",
+  "marketing-automation": "grow",
+  "ai-automation-solutions": "automate",
+  "crm-workflow-automation": "automate",
+  "ai-chatbots-virtual-assistants": "automate",
+  "ai-voice-agents": "automate",
+  "document-processing-automation": "automate",
+  "ai-business-consulting": "transform",
+  "custom-ai-applications": "transform",
+  "ai-analytics-business-intelligence": "transform",
+  "enterprise-ai-integration": "transform",
+  "ai-product-development": "transform"
+};
+
 export function mapServicesToItems(cmsServices: Service[]): ServiceItem[] {
   return cmsServices.map(cms => {
     const slug = cms.slug || cms.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
@@ -262,6 +285,12 @@ export function mapServicesToItems(cmsServices: Service[]): ServiceItem[] {
       ]
     };
 
+    const resolvedModule = cms.module || slugToModuleMap[slug] || (
+      cms.id === "s1" || cms.id === "s2" || cms.id === "s3" || cms.id === "s4" ? "build" :
+      cms.id === "s5" || cms.id === "s6" || cms.id === "s7" || cms.id === "s8" || cms.id === "s9" || cms.id === "s10" ? "grow" :
+      cms.id === "s11" || cms.id === "s12" || cms.id === "s13" || cms.id === "s14" || cms.id === "s15" ? "automate" : "transform"
+    );
+
     return {
       id: slug,
       slug: slug,
@@ -272,13 +301,13 @@ export function mapServicesToItems(cmsServices: Service[]): ServiceItem[] {
       desc: cms.description + " " + cms.details,
       description: cms.description,
       details: cms.details,
-      benefits: cms.deliverables.slice(0, 4),
+      benefits: cms.deliverables ? cms.deliverables.slice(0, 4) : [],
       process: meta.process,
-      deliverables: cms.deliverables,
+      deliverables: cms.deliverables || [],
       image: meta.image,
       color: meta.color,
       glowColor: meta.glowColor,
-      module: cms.module
+      module: resolvedModule
     };
   });
 }

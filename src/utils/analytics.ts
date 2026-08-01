@@ -114,16 +114,20 @@ export function trackWhatsAppClick(selectedTopic?: string): WhatsAppAnalyticsPay
   // 3. Network call to backend API
   if (typeof window !== "undefined") {
     try {
-      if (navigator.sendBeacon) {
-        const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-        navigator.sendBeacon("/api/analytics/whatsapp-click", blob);
-      } else {
-        fetch("/api/analytics/whatsapp-click", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-      }
+      fetch("/api/analytics/whatsapp-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data?.session?.sessionId) {
+            try {
+              sessionStorage.setItem("lcl_session_id", data.session.sessionId);
+            } catch (e) {}
+          }
+        })
+        .catch(() => {});
     } catch {
       // Ignore failures
     }

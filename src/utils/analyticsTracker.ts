@@ -161,7 +161,21 @@ export function initAnalytics() {
         referrer: document.referrer || "Direct"
       }
     })
-  }).catch(() => {});
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data?.session?.sessionId) {
+        try {
+          safeSessionStorage.setItem("lcl_session_id", data.session.sessionId);
+        } catch (e) {}
+      }
+      if (data?.visitor?.visitorId) {
+        try {
+          safeLocalStorage.setItem("lcl_visitor_id", data.visitor.visitorId);
+        } catch (e) {}
+      }
+    })
+    .catch(() => {});
 
   // Pageview Reporting
   trackPageView(window.location.pathname, document.title);
@@ -196,12 +210,13 @@ export function initAnalytics() {
 
   // Periodic Session Heartbeat (Every 30s)
   setInterval(() => {
+    const activeIds = getOrCreateIds();
     const elapsedSeconds = Math.round((Date.now() - sessionStartTime) / 1000);
     fetch("/api/analytics/session/end", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionId,
+        sessionId: activeIds.sessionId,
         durationSeconds: elapsedSeconds
       })
     }).catch(() => {});
@@ -266,7 +281,9 @@ export function trackLeadSubmission(lead: {
   }).catch(() => {});
 }
 
-function setupEventListeners(visitorId: string, sessionId: string) {
+const lastRecordedCtaEvents: Record<string, number> = {};
+
+function setupEventListeners(initialVisitorId: string, initialSessionId: string) {
   // Click Heatmap & CTA Detection
   document.addEventListener("click", (e) => {
     pageClicksCount++;
@@ -291,23 +308,40 @@ function setupEventListeners(visitorId: string, sessionId: string) {
     }).catch(() => {});
 
     // CTA Events Auto Detection
-    const text = (target.innerText || "").toLowerCase();
-    const href = (target.closest("a")?.getAttribute("href") || "").toLowerCase();
+    const buttonOrLink = target.closest("button, a") || target;
+    const text = ((buttonOrLink as HTMLElement).innerText || target.innerText || "").toLowerCase().trim();
+    const href = ((buttonOrLink as HTMLElement).getAttribute?.("href") || "").toLowerCase();
+
+    let eventToTrigger: string | null = null;
+    let meta: any = { text };
 
     if (text.includes("whatsapp") || href.includes("wa.me") || href.includes("whatsapp")) {
-      trackCustomEvent("WhatsApp Button Click", { text, href });
+      eventToTrigger = "WhatsApp Button Click";
+      meta = { text, href };
     } else if (text.includes("book") || text.includes("consultation") || text.includes("schedule")) {
-      trackCustomEvent("Book Consultation", { text });
+      eventToTrigger = "Book Consultation";
     } else if (text.includes("contact") || text.includes("get in touch") || text.includes("start project")) {
-      trackCustomEvent("Contact Button", { text });
+      eventToTrigger = "Contact Button";
     } else if (text.includes("pricing") || text.includes("estimate") || href.includes("pricing")) {
-      trackCustomEvent("Pricing Page View", { text });
+      eventToTrigger = "Pricing Page View";
     } else if (text.includes("portfolio") || href.includes("portfolio")) {
-      trackCustomEvent("Portfolio View", { text });
+      eventToTrigger = "Portfolio View";
     } else if (text.includes("call") || href.startsWith("tel:")) {
-      trackCustomEvent("Call Button", { text, href });
+      eventToTrigger = "Call Button";
+      meta = { text, href };
     } else if (text.includes("email") || href.startsWith("mailto:")) {
-      trackCustomEvent("Email Button", { text, href });
+      eventToTrigger = "Email Button";
+      meta = { text, href };
+    }
+
+    if (eventToTrigger) {
+      const now = Date.now();
+      const lastTime = lastRecordedCtaEvents[eventToTrigger] || 0;
+      // Prevent firing duplicate CTA event within 2000ms
+      if (now - lastTime > 2000) {
+        lastRecordedCtaEvents[eventToTrigger] = now;
+        trackCustomEvent(eventToTrigger, meta);
+      }
     }
   });
 

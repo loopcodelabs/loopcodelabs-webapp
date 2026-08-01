@@ -36,6 +36,7 @@ const defaultWebsiteConfig = {
     fontFamily: "Space Grotesk"
   },
   services: [
+    // === BUILD ===
     {
       id: "s1",
       number: "01",
@@ -75,6 +76,172 @@ const defaultWebsiteConfig = {
       description: "Full-scale corporate design books, logo guidelines, and product positioning.",
       details: "Distinct brand identities engineered to project luxury and high enterprise trust. Includes total typography scaling rules, color space dynamics, logo vectors, and marketing asset guidelines.",
       deliverables: ["Vector brand mark & icon suite", "Typography & color scale guidelines", "Marketing & pitch deck templates", "Social media brand asset kit"]
+    },
+
+    // === GROW ===
+    {
+      id: "s5",
+      number: "05",
+      title: "SEO Services",
+      slug: "seo-services",
+      module: "grow",
+      description: "On-page, technical, and off-page optimizations to rank #1 on Google India.",
+      details: "Advanced technical search engine marketing that targets direct ROI. We specialize in JSON-LD structure mapping, competitive keyword clusters, page speed metrics, and programmatic content systems.",
+      deliverables: ["Comprehensive technical site audits", "Topical cluster blueprints", "JSON-LD structured schema injects", "Core Web Vitals remediation"]
+    },
+    {
+      id: "s6",
+      number: "06",
+      title: "Digital Marketing",
+      slug: "digital-marketing",
+      module: "grow",
+      description: "ROI-driven conversion funnels, local outreach, and content mapping.",
+      details: "Crafting end-to-end customer acquisition funnels. From high-converting landing pages to dynamic email capture, we configure high-yield systems to turn visitors into repeat enterprise buyers.",
+      deliverables: ["High-impact landing page design", "Multi-stage lead capture forms", "Analytics dashboards and heatmaps", "Local search engine directory sync"]
+    },
+    {
+      id: "s7",
+      number: "07",
+      title: "Paid Advertising",
+      slug: "paid-advertising",
+      module: "grow",
+      description: "Meta Ads, Google Search, and LinkedIn campaigns tailored to drive direct leads.",
+      details: "Surgical execution of paid digital campaigns. We write compelling copy, design conversion-focused creative assets, and build custom audiences to maximize your pipeline's Return on Ad Spend (ROAS).",
+      deliverables: ["Ad design assets & copywriting", "Multi-platform pixel setups", "Budget pacing & continuous bid tests", "Custom cohort retention audiences"]
+    },
+    {
+      id: "s8",
+      number: "08",
+      title: "Email Marketing",
+      slug: "email-marketing",
+      module: "grow",
+      description: "High-retention automation and drip sequences to build customer life-time value.",
+      details: "Unlock hidden retention loops. We map out full buyer journeys, wire dynamic transactional emails, and schedule content drips that nurture prospects and boost life-time customer value automatically.",
+      deliverables: ["Custom template construction", "Behavior-based automated triggers", "Weekly high-yield newsletters", "A/B copy and layout experimentations"]
+    },
+    {
+      id: "s9",
+      number: "09",
+      title: "Lead Generation Automation",
+      slug: "lead-generation-automation",
+      module: "grow",
+      description: "Autonomous multi-channel lead capture, validation, and programmatic routing systems.",
+      details: "We build high-fidelity forms and integrations that capture, enrich, verify, and route leads to your sales reps in real time. Features automatic phone verification, LinkedIn scraping, and CRM synchronization.",
+      deliverables: ["Real-time lead enrichment pipelines", "E-mail & Phone verification filters", "Intelligent round-robin routing logic", "Web scraping and profiling agents"]
+    },
+    {
+      id: "s10",
+      number: "10",
+      title: "Marketing Automation",
+      slug: "marketing-automation",
+      module: "grow",
+      description: "End-to-end campaign automation, visitor tracking, and personalized cohort flows.",
+      details: "Orchestrate personalized customer journeys at scale. We sync Webhook triggers with marketing platforms, implement dynamic content modules based on visitor behaviors, and configure multi-channel campaigns.",
+      deliverables: ["Dynamic content personalization tokens", "Behavioral event tracking setups", "SaaS marketing lifecycle maps", "Automated re-engagement sequences"]
+    },
+
+    // === AUTOMATE ===
+    {
+      id: "s11",
+      number: "11",
+      title: "AI Automation Solutions",
+      slug: "ai-automation-solutions",
+      module: "automate",
+      description: "Custom LLM integrations and automated agent workflows to automate complex business workflows.",
+      details: "Harness modern Large Language Models to automate structured writing, content categorization, customer request triaging, and repetitive computer operations. Built with LangChain and semantic routing.",
+      deliverables: ["Custom LLM integration blueprints", "Automated system triage controllers", "Structured data extraction pipelines", "Semantic query router gateways"]
+    },
+    {
+      id: "s12",
+      number: "12",
+      title: "CRM & Workflow Automation",
+      slug: "crm-workflow-automation",
+      module: "automate",
+      description: "Seamless integrations connecting HubSpot, Salesforce, Slack, and your proprietary databases.",
+      details: "Eliminate manual copy-pasting between systems. We orchestrate robust data pipelines that keep your CRM, communication tools, invoicing apps, and internal databases perfectly synchronized 24/7.",
+      deliverables: ["HubSpot/Salesforce database sync", "Instant Slack alert system notifications", "Dynamic automated invoice generation", "Error-handling redundancy mechanisms"]
+    },
+    {
+      id: "s13",
+      number: "13",
+      title: "AI Chatbots & Virtual Assistants",
+      slug: "ai-chatbots-virtual-assistants",
+      module: "automate",
+      description: "Intelligent, context-aware customer support agents trained on your custom knowledge base.",
+      details: "Deploy 24/7 conversational interfaces that resolve up to 70% of inbound customer inquiries instantly. Integrates retrieval-augmented generation (RAG) with secure vector search databases.",
+      deliverables: ["RAG-enabled vector knowledge base", "Contextual memory & session retention", "Human-in-the-loop takeover controls", "Interactive multi-language dialog flows"]
+    },
+    {
+      id: "s14",
+      number: "14",
+      title: "AI Voice Agents",
+      slug: "ai-voice-agents",
+      module: "automate",
+      description: "Ultra-low-latency autonomous conversational voice agents for seamless phone support.",
+      details: "Deploy dynamic phone agents that speak naturally, handle interruptions, and execute database queries during live support calls. Built on Gemini Live API and WebRTC systems.",
+      deliverables: ["Ultra-low-latency voice stream setups", "Custom vocal tone & pronunciation rules", "Automated live phone bridge triggers", "Post-call summary transcripts and logs"]
+    },
+    {
+      id: "s15",
+      number: "15",
+      title: "Document Processing Automation",
+      slug: "document-processing-automation",
+      module: "automate",
+      description: "Automated OCR, indexing, and data extraction from PDF invoices, legal contracts, and forms.",
+      details: "Transform unstructured paper documents or PDFs into pristine database records instantly. Utilizes multimodal AI vision models to parse handwriting, tables, and nested text blocks with 99.9% accuracy.",
+      deliverables: ["Multimodal OCR visual document parser", "JSON metadata structure exports", "Anomalous entry flagging algorithms", "Bulk secure file batch processes"]
+    },
+
+    // === TRANSFORM ===
+    {
+      id: "s16",
+      number: "16",
+      title: "AI Business Consulting",
+      slug: "ai-business-consulting",
+      module: "transform",
+      description: "Strategic AI roadmaps, technical feasibility studies, and operational cost savings audits.",
+      details: "Partner with our elite consultants to identify high-ROI AI opportunities in your enterprise. We audit your existing workflows, model financial impact, and author comprehensive execution roadmaps.",
+      deliverables: ["Operational AI cost savings audit", "Technical architecture feasibility report", "Step-by-step corporate execution roadmap", "Vendor & model comparison matrices"]
+    },
+    {
+      id: "s17",
+      number: "17",
+      title: "Custom AI Applications",
+      slug: "custom-ai-applications",
+      module: "transform",
+      description: "Bespoke proprietary software, specialized vector search engines, and fine-tuned AI systems.",
+      details: "Own your artificial intelligence stack. We design, build, and deploy specialized applications tailored to your proprietary data, domain-specific tasks, and strict compliance environments.",
+      deliverables: ["Proprietary source-code repository", "Fine-tuned model checkpoint weights", "Interactive admin operations dashboard", "Scalable secure Kubernetes deployment"]
+    },
+    {
+      id: "s18",
+      number: "18",
+      title: "AI Analytics & Business Intelligence",
+      slug: "ai-analytics-business-intelligence",
+      module: "transform",
+      description: "Predictive modeling, churn analysis, and interactive real-time corporate insight dashboards.",
+      details: "Turn raw tracking data into actionable strategic foresight. We engineer real-time pipelines that monitor enterprise KPIs, project future performance trends, and visualize key risk vectors dynamically.",
+      deliverables: ["Interactive business intelligence dashboards", "Predictive buyer churn algorithms", "Automated anomaly alert system triggers", "Multi-tenant executive report builders"]
+    },
+    {
+      id: "s19",
+      number: "19",
+      title: "Enterprise AI Integration",
+      slug: "enterprise-ai-integration",
+      module: "transform",
+      description: "Embedding LLMs and cognitive agents into your legacy ERP, accounting, and supply chain software.",
+      details: "Bring intelligent decision-making to your legacy systems. We engineer secure middleware APIs that connect proprietary databases with advanced intelligence systems without breaking operational continuity.",
+      deliverables: ["Secure middleware API gateways", "Legacy ERP cognitive connectors", "Role-based data boundary firewalls", "Transactional audit logs and tracing"]
+    },
+    {
+      id: "s20",
+      number: "20",
+      title: "AI Product Development",
+      slug: "ai-product-development",
+      module: "transform",
+      description: "Architecting, prototyping, and scaling new AI-native SaaS products for commercial launch.",
+      details: "From zero to SaaS launch. We partner to design user-centric AI features, engineer robust backend scaling limits, secure API rate boundaries, and deliver a polished commercial product.",
+      deliverables: ["Commercial SaaS product architecture", "User subscription & token billing sync", "High-fidelity responsive UI interface", "DevOps scaling & failover playbooks"]
     }
   ],
   blogs: [
@@ -492,6 +659,9 @@ export const analyticsStore = {
     if (!db.websiteConfig) {
       db.websiteConfig = defaultWebsiteConfig;
     }
+    if (!db.websiteConfig.services || !Array.isArray(db.websiteConfig.services) || db.websiteConfig.services.length < defaultWebsiteConfig.services.length) {
+      db.websiteConfig.services = defaultWebsiteConfig.services;
+    }
     return db.websiteConfig;
   },
 
@@ -624,6 +794,16 @@ export const analyticsStore = {
       vId = generateVisitorId(now);
     }
     let sId = pv.sessionId;
+
+    // Verify session belongs to this visitor, fallback to visitor's latest active session
+    if (sId) {
+      const reqSession = db.sessions.find(s => s.sessionId === sId);
+      const latestVisitorSession = db.sessions.find(s => s.visitorId === vId);
+      if (latestVisitorSession && (!reqSession || reqSession.visitorId !== vId || (reqSession.browser !== latestVisitorSession.browser))) {
+        sId = latestVisitorSession.sessionId;
+      }
+    }
+
     if (!sId || !/^sid-\d{6}-\d{5}$/.test(sId)) {
       sId = generateSessionId(now);
     }
@@ -669,15 +849,42 @@ export const analyticsStore = {
       vId = generateVisitorId(now);
     }
     let sId = evt.sessionId;
+
+    // Verify session belongs to this visitor, fallback to visitor's latest active session
+    if (sId) {
+      const reqSession = db.sessions.find(s => s.sessionId === sId);
+      const latestVisitorSession = db.sessions.find(s => s.visitorId === vId);
+      if (latestVisitorSession && (!reqSession || reqSession.visitorId !== vId || (reqSession.browser !== latestVisitorSession.browser))) {
+        sId = latestVisitorSession.sessionId;
+      }
+    }
+
     if (!sId || !/^sid-\d{6}-\d{5}$/.test(sId)) {
       sId = generateSessionId(now);
     }
 
+    const eventName = evt.eventName || "User Interaction";
+    const urlPath = evt.urlPath || "/";
+
+    // Deduplication check: avoid duplicate event entries within 2000ms window
+    const duplicateThresholdMs = 2000;
+    const existingDuplicate = db.events.find(e =>
+      e.eventName === eventName &&
+      e.visitorId === vId &&
+      e.sessionId === sId &&
+      e.urlPath === urlPath &&
+      Math.abs(new Date(e.timestamp).getTime() - now.getTime()) < duplicateThresholdMs
+    );
+
+    if (existingDuplicate) {
+      return existingDuplicate;
+    }
+
     const eventRecord: EventRecord = {
       id: "evt_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6),
-      eventName: evt.eventName || "User Interaction",
+      eventName,
       timestamp: now.toISOString(),
-      urlPath: evt.urlPath || "/",
+      urlPath,
       pageTitle: evt.pageTitle || "LoopCodeLabs",
       visitorId: vId,
       sessionId: sId,

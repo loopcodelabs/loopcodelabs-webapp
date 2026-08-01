@@ -458,9 +458,15 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const hasOldSlugs = parsed.some(s => 
           ["app-development", "seo", "paid-ads", "automation", "branding", "ui-ux"].includes(s.slug)
         );
-        // If the parsed list has the same number of services as our core catalog, return it with healed module properties
-        if (!hasOldSlugs && parsed && parsed.length === defaultServices.length) {
-          const healed = parsed.map(s => {
+        if (!hasOldSlugs && parsed && Array.isArray(parsed)) {
+          const existingSlugs = new Set(parsed.map(s => s.slug));
+          const merged = [...parsed];
+          defaultServices.forEach(ds => {
+            if (!existingSlugs.has(ds.slug)) {
+              merged.push(ds);
+            }
+          });
+          const healed = merged.map(s => {
             const match = defaultServices.find(ds => ds.slug === s.slug || ds.id === s.id);
             return {
               ...s,
@@ -532,7 +538,24 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (data && data.config) {
           if (data.config.modules && Array.isArray(data.config.modules)) setModules(data.config.modules);
           if (data.config.theme && data.config.theme.mode) setTheme(data.config.theme);
-          if (data.config.services && Array.isArray(data.config.services)) setServices(data.config.services);
+          if (data.config.services && Array.isArray(data.config.services)) {
+            const serverServices = data.config.services as Service[];
+            const existingSlugs = new Set(serverServices.map(s => s.slug));
+            const merged = [...serverServices];
+            defaultServices.forEach(ds => {
+              if (!existingSlugs.has(ds.slug)) {
+                merged.push(ds);
+              }
+            });
+            const healed = merged.map(s => {
+              const match = defaultServices.find(ds => ds.slug === s.slug || ds.id === s.id);
+              return {
+                ...s,
+                module: s.module || match?.module || "build"
+              };
+            });
+            setServices(healed);
+          }
           if (data.config.blogs && Array.isArray(data.config.blogs)) setBlogs(data.config.blogs);
           if (data.config.scenarios && Array.isArray(data.config.scenarios)) setScenarios(data.config.scenarios);
           if (data.config.siteSettings) setSiteSettings(data.config.siteSettings);
