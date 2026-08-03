@@ -95,7 +95,7 @@ export default function Contact() {
           </div>
 
           <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
-            Fill out our inquiry form or send us an email directly. We review all incoming briefs and respond within 24 business hours.
+            Fill out our inquiry form or send us an email directly. We review all incoming briefs and respond within 24-48 business hours.
           </p>
 
           {/* Contact Details Cards */}
@@ -214,7 +214,7 @@ export default function Contact() {
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message / Brief *</label>
+                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message Brief *</label>
                     <textarea
                       id="contact-message"
                       required
