@@ -103,12 +103,40 @@ export default function App() {
 
   const login = async () => {
     try {
-      // 1. Fetch Google auth url from server
-      const res = await fetch("/api/auth/google/url");
-      if (!res.ok) throw new Error("Failed to get google auth URL");
-      const { url } = await res.json();
+      let url = "";
 
-      // 2. Open popup with Google auth url
+      // 1. Attempt to fetch Google auth URL from Express backend
+      try {
+        const res = await fetch("/api/auth/google/url");
+        if (res.ok) {
+          const data = await res.json();
+          url = data.url;
+        }
+      } catch (e) {
+        console.warn("Backend /api/auth/google/url unreachable, falling back to client-side OAuth URL generation");
+      }
+
+      // 2. Client-side fallback if backend API endpoint was not reachable or returned error (e.g. on Vercel static SPA build)
+      if (!url) {
+        const clientId = ((import.meta as any).env?.VITE_GOOGLE_CLIENT_ID as string) || "";
+        if (clientId) {
+          const redirectUri = `${window.location.origin}/auth/callback`;
+          const params = new URLSearchParams({
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            response_type: "code",
+            scope: "openid email profile",
+            access_type: "offline",
+            prompt: "consent"
+          });
+          url = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+        } else {
+          alert("Google Client ID is missing. Please set GOOGLE_CLIENT_ID (or VITE_GOOGLE_CLIENT_ID) in your environment variables on Vercel.");
+          throw new Error("Failed to get Google auth URL from server and VITE_GOOGLE_CLIENT_ID is not configured.");
+        }
+      }
+
+      // 3. Open popup with Google auth url
       const width = 500;
       const height = 650;
       const left = window.screen.width / 2 - width / 2;
