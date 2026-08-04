@@ -2,66 +2,74 @@ import mysql from "mysql2/promise";
 import "./env.js";
 
 let pool: mysql.Pool | null = null;
+let poolPromise: Promise<mysql.Pool | null> | null = null;
 let mysqlAvailable = false;
 let dbFailedUntil = 0;
 
 export async function getMySQLPool(): Promise<mysql.Pool | null> {
   if (pool) return pool;
+  if (poolPromise) return poolPromise;
 
-  // If database connection failed recently, don't attempt reconnect for 30s
-  if (Date.now() < dbFailedUntil) {
-    return null;
-  }
-
-  const host = process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST;
-  const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
-
-  if (!host && !dbUrl) {
-    return null;
-  }
-
-  let testPool: mysql.Pool | null = null;
-  try {
-    const port = Number(process.env.DB_PORT || process.env.MYSQL_PORT) || 3306;
-    const user = process.env.DB_USER || process.env.MYSQL_USER || "root";
-    const password = process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD || "";
-    const database = process.env.DB_NAME || process.env.MYSQL_DATABASE || "loopcodelabs_dev";
-
-    if (dbUrl) {
-      testPool = mysql.createPool(dbUrl);
-    } else {
-      testPool = mysql.createPool({
-        host,
-        port,
-        user,
-        password,
-        database,
-        waitForConnections: true,
-        connectionLimit: 3,
-        queueLimit: 0,
-        connectTimeout: 1500
-      });
+  poolPromise = (async () => {
+    // If database connection failed recently, don't attempt reconnect for 30s
+    if (Date.now() < dbFailedUntil) {
+      return null;
     }
 
-    const connPromise = testPool.getConnection();
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Database connection timeout")), 1500)
-    );
+    const host = process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST;
+    const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
 
-    const conn = await Promise.race([connPromise, timeoutPromise]);
-    conn.release();
-    pool = testPool;
-    mysqlAvailable = true;
-    console.log(`[MySQL] Successfully connected to database: ${database}`);
-    return pool;
-  } catch (err: any) {
-    mysqlAvailable = false;
-    dbFailedUntil = Date.now() + 30000;
-    if (testPool) {
-      testPool.end().catch(() => {});
+    if (!host && !dbUrl) {
+      return null;
     }
-    return null;
-  }
+
+    let testPool: mysql.Pool | null = null;
+    try {
+      const port = Number(process.env.DB_PORT || process.env.MYSQL_PORT) || 3306;
+      const user = process.env.DB_USER || process.env.MYSQL_USER || "root";
+      const password = process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD || "";
+      const database = process.env.DB_NAME || process.env.MYSQL_DATABASE || "loopcodelabs_dev";
+
+      if (dbUrl) {
+        testPool = mysql.createPool(dbUrl);
+      } else {
+        testPool = mysql.createPool({
+          host,
+          port,
+          user,
+          password,
+          database,
+          waitForConnections: true,
+          connectionLimit: 3,
+          queueLimit: 0,
+          connectTimeout: 1500
+        });
+      }
+
+      const connPromise = testPool.getConnection();
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Database connection timeout")), 1500)
+      );
+
+      const conn = await Promise.race([connPromise, timeoutPromise]);
+      conn.release();
+      pool = testPool;
+      mysqlAvailable = true;
+      console.log(`[MySQL] Successfully connected to database: ${database}`);
+      return pool;
+    } catch (err: any) {
+      mysqlAvailable = false;
+      dbFailedUntil = Date.now() + 30000;
+      if (testPool) {
+        testPool.end().catch(() => {});
+      }
+      return null;
+    } finally {
+      poolPromise = null;
+    }
+  })();
+
+  return poolPromise;
 }
 
 export function isMySQLAvailable(): boolean {
