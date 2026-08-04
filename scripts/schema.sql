@@ -1,8 +1,8 @@
 -- LoopCodeLabs Database Schema Definition (MySQL 8.0+)
 -- Database: loopcodelabs_dev
 
-CREATE DATABASE IF NOT EXISTS `loopcodelabs_dev` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `loopcodelabs_dev`;
+-- CREATE DATABASE IF NOT EXISTS `loopcodelabs_dev` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `loopcodelabs_dev`;
 
 -- 1. Roles & Permissions Table
 CREATE TABLE IF NOT EXISTS `roles` (
