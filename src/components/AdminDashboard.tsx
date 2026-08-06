@@ -27,7 +27,11 @@ import {
   MessageCircle,
   Activity,
   BarChart2,
-  FileText
+  FileText,
+  ShieldCheck,
+  KeyRound,
+  UserCheck,
+  Lock
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { AnalyticsDashboard } from "./AnalyticsDashboard";
@@ -36,7 +40,7 @@ interface AdminDashboardProps {
   onBack: () => void;
 }
 
-type AdminTab = "general" | "modules" | "theme" | "services" | "blogs" | "scenarios" | "whatsapp" | "analytics";
+type AdminTab = "general" | "modules" | "theme" | "services" | "blogs" | "scenarios" | "whatsapp" | "analytics" | "security";
 
 export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const {
@@ -70,6 +74,10 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const [whatsappLogs, setWhatsappLogs] = useState<any[]>([]);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState<boolean>(false);
 
+  // Database login activity logs state
+  const [loginLogs, setLoginLogs] = useState<any[]>([]);
+  const [loadingLoginLogs, setLoadingLoginLogs] = useState<boolean>(false);
+
   const fetchWhatsAppLogs = async () => {
     setLoadingWhatsApp(true);
     try {
@@ -96,9 +104,36 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
     }
   };
 
+  const fetchLoginLogs = async () => {
+    setLoadingLoginLogs(true);
+    try {
+      const res = await fetch("/api/admin/login-logs");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.logs)) {
+        setLoginLogs(data.logs);
+      }
+    } catch (err) {
+      console.error("Error fetching database login logs:", err);
+    } finally {
+      setLoadingLoginLogs(false);
+    }
+  };
+
+  const handleClearLoginLogs = async () => {
+    try {
+      await fetch("/api/admin/login-logs/clear", { method: "POST" });
+      setLoginLogs([]);
+      showSuccess("Database login activity logs cleared!");
+    } catch (e) {
+      console.error("Error clearing login logs:", e);
+    }
+  };
+
   React.useEffect(() => {
     if (activeTab === "whatsapp") {
       fetchWhatsAppLogs();
+    } else if (activeTab === "security") {
+      fetchLoginLogs();
     }
   }, [activeTab]);
 
@@ -240,9 +275,12 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] font-mono tracking-widest text-accent uppercase font-bold">[ SYSTEM OPERATIONS ]</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                <span className="text-[10px] font-mono tracking-wider text-amber-400 bg-amber-950/40 border border-amber-800/60 px-2 py-0.5 rounded-md font-semibold">
+                  5m Inactivity Session Limit Active
+                </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">CMS Admin Console</h1>
             </div>
@@ -410,6 +448,18 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
               >
                 <MessageCircle className="w-4 h-4 text-[#25D366]" />
                 WhatsApp Clicks
+              </button>
+
+              <button
+                onClick={() => setActiveTab("security")}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer text-left ${
+                  activeTab === "security"
+                    ? "bg-accent/10 border border-accent/20 text-white"
+                    : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border border-transparent"
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                Login Logs (DB)
               </button>
             </nav>
             
@@ -1524,6 +1574,139 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB: DATABASE LOGIN ACTIVITY LOGS */}
+            {activeTab === "security" && (
+              <div className="space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                      Database Login Activity Logs
+                    </h2>
+                    <p className="text-xs text-zinc-400">
+                      Real-time database audit log recording all user login attempts, timestamps, Google OAuth profile details, IP addresses, and user agents in the <code className="text-cyan-400">login_logs</code> table.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={fetchLoginLogs}
+                      disabled={loadingLoginLogs}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 transition-all cursor-pointer flex items-center gap-2"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${loadingLoginLogs ? "animate-spin text-cyan-400" : ""}`} />
+                      Refresh Logs
+                    </button>
+                    <button
+                      onClick={handleClearLoginLogs}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 transition-all cursor-pointer"
+                    >
+                      Clear Audit Logs
+                    </button>
+                  </div>
+                </div>
+
+                {/* Session status banner */}
+                <div className="p-4 rounded-xl border border-cyan-500/20 bg-cyan-950/20 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2 justify-center text-cyan-400">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white">Security Enforcement Active</p>
+                      <p className="text-[11px] text-zinc-400">5-Minute Inactivity Session Timeout enabled. Automatic logout triggers upon zero user activity.</p>
+                    </div>
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/20">
+                    MySQL Table: login_logs
+                  </div>
+                </div>
+
+                {loadingLoginLogs && loginLogs.length === 0 ? (
+                  <div className="p-12 text-center text-zinc-500 space-y-2 border border-zinc-900 bg-zinc-950/40 rounded-2xl">
+                    <RefreshCw className="w-6 h-6 animate-spin text-cyan-400 mx-auto" />
+                    <p className="text-xs font-mono text-zinc-400">Fetching login activity records from database...</p>
+                  </div>
+                ) : loginLogs.length === 0 ? (
+                  <div className="p-10 rounded-2xl border border-zinc-900 bg-zinc-950/40 text-center space-y-2">
+                    <UserCheck className="w-8 h-8 text-zinc-700 mx-auto" />
+                    <p className="text-xs font-bold text-zinc-400">No Login Activity Logged Yet</p>
+                    <p className="text-[11px] text-zinc-600 max-w-md mx-auto">
+                      All future Google OAuth sign-in events, successful logins, and access control blocks will be persisted directly to the MySQL <code className="text-zinc-400">login_logs</code> table and displayed here in real time.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-950/50 overflow-hidden">
+                    <div className="p-3 bg-zinc-900/80 border-b border-zinc-800 text-xs font-bold text-zinc-400 flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
+                        Total Recorded Authentication Events: {loginLogs.length}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 font-mono">Sorted by Most Recent</span>
+                    </div>
+
+                    <div className="divide-y divide-zinc-800/60 max-h-[580px] overflow-y-auto">
+                      {loginLogs.map((log: any, idx: number) => {
+                        const isSuccess = log.status === "Success";
+                        const isUnauthorized = log.status === "Failed_Unauthorized";
+
+                        return (
+                          <div key={log.id || idx} className="p-4 space-y-2.5 text-xs hover:bg-zinc-900/40 transition-colors">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex items-center gap-3">
+                                {log.picture ? (
+                                  <img src={log.picture} alt={log.name || "User"} className="w-8 h-8 rounded-full border border-zinc-700" />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-300 text-xs">
+                                    {(log.name || log.email || "U").substring(0, 1).toUpperCase()}
+                                  </div>
+                                )}
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-white text-xs">{log.name || "User"}</span>
+                                    <span className="text-zinc-400 text-[11px]">({log.email || "Unknown"})</span>
+                                  </div>
+                                  <div className="text-[10px] text-zinc-500 font-mono">
+                                    Provider: {log.provider || "Google OAuth"}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono border ${
+                                  isSuccess
+                                    ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                                    : isUnauthorized
+                                    ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
+                                    : "text-rose-400 bg-rose-500/10 border-rose-500/20"
+                                }`}>
+                                  {isSuccess ? "✓ Login Success" : isUnauthorized ? "⚠ Access Denied" : "✕ Login Failed"}
+                                </span>
+                                <span className="font-mono text-[10px] text-zinc-500">
+                                  {log.timestamp ? new Date(log.timestamp).toLocaleString() : "Just now"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {log.failureReason && (
+                              <div className="p-2 bg-rose-950/20 border border-rose-500/20 text-rose-300 text-[11px] rounded-lg">
+                                <strong className="font-semibold">Reason:</strong> {log.failureReason}
+                              </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] text-zinc-400 font-mono bg-zinc-900/60 p-2.5 rounded-xl border border-zinc-800/40">
+                              <div><span className="text-zinc-600">IP Address:</span> <span className="text-zinc-200">{log.ipAddress || "127.0.0.1"}</span></div>
+                              <div><span className="text-zinc-600">User ID:</span> <span className="text-zinc-200">{log.userId || "N/A"}</span></div>
+                              <div className="truncate"><span className="text-zinc-600">User Agent:</span> <span className="text-zinc-300" title={log.userAgent}>{log.userAgent ? (log.userAgent.length > 35 ? log.userAgent.substring(0, 35) + "..." : log.userAgent) : "Unknown"}</span></div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

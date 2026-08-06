@@ -18,8 +18,8 @@ import {
 import { motion } from "motion/react";
 import Contact from "./Contact";
 import FAQ from "./FAQ";
-// @ts-ignore
-import collaborativeCrewImg from "../assets/images/regenerated_image_1784015142412.png";
+
+const collaborativeCrewImg = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80";
 
 interface AboutLandingPageProps {
   onBack: () => void;
@@ -51,7 +51,7 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
     {
       num: "03",
       title: "Results",
-      desc: "Vanity metrics are easy. We optimise for the numbers that actually move your business."
+      desc: "Vanity metrics are easy. We optimise for the numbers that actually transform your business."
     },
     {
       num: "04",

@@ -230,6 +230,24 @@ CREATE TABLE IF NOT EXISTS `website_settings` (
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 13. Security & Login Activity Logs Table
+CREATE TABLE IF NOT EXISTS `login_logs` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `email` VARCHAR(191) NOT NULL,
+  `name` VARCHAR(100) NULL,
+  `user_id` VARCHAR(191) NULL,
+  `picture` VARCHAR(255) NULL,
+  `status` ENUM('Success', 'Failed_Unauthorized', 'Failed') DEFAULT 'Success',
+  `ip_address` VARCHAR(45) NULL,
+  `user_agent` TEXT NULL,
+  `provider` VARCHAR(50) DEFAULT 'Google OAuth',
+  `failure_reason` VARCHAR(255) NULL,
+  `timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_login_email` (`email`),
+  INDEX `idx_login_timestamp` (`timestamp`),
+  INDEX `idx_login_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Analytical Summary View
 CREATE OR REPLACE VIEW `v_live_visitors_summary` AS
 SELECT 

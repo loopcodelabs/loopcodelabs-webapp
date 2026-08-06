@@ -749,3 +749,124 @@ async function _executeSaveAnalyticsToMySQL(analyticsData: any): Promise<boolean
   return false;
 }
 
+export async function recordLoginLogToMySQL(log: {
+  id?: string;
+  email: string;
+  name?: string;
+  userId?: string;
+  picture?: string;
+  status: "Success" | "Failed_Unauthorized" | "Failed";
+  ipAddress?: string;
+  userAgent?: string;
+  provider?: string;
+  failureReason?: string;
+  timestamp?: string;
+}): Promise<boolean> {
+  try {
+    const p = await getMySQLPool();
+    if (!p) return false;
+
+    // Ensure login_logs table exists
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS login_logs (
+        id VARCHAR(64) PRIMARY KEY,
+        email VARCHAR(191) NOT NULL,
+        name VARCHAR(100) NULL,
+        user_id VARCHAR(191) NULL,
+        picture VARCHAR(255) NULL,
+        status ENUM('Success', 'Failed_Unauthorized', 'Failed') DEFAULT 'Success',
+        ip_address VARCHAR(45) NULL,
+        user_agent TEXT NULL,
+        provider VARCHAR(50) DEFAULT 'Google OAuth',
+        failure_reason VARCHAR(255) NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_login_email (email),
+        INDEX idx_login_timestamp (timestamp),
+        INDEX idx_login_status (status)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `).catch(() => {});
+
+    const logId = log.id || `log_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const ts = log.timestamp ? formatMySQLDateTime(log.timestamp) : formatMySQLDateTime(new Date().toISOString());
+
+    await p.query(
+      `INSERT INTO login_logs (id, email, name, user_id, picture, status, ip_address, user_agent, provider, failure_reason, timestamp)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        logId,
+        log.email || "Unknown",
+        log.name || null,
+        log.userId || null,
+        log.picture || null,
+        log.status || "Success",
+        log.ipAddress || null,
+        log.userAgent || null,
+        log.provider || "Google OAuth",
+        log.failureReason || null,
+        ts
+      ]
+    );
+
+    // Also update last_login in users table if user exists
+    if (log.status === "Success" && log.email && log.email !== "Unknown") {
+      await p.query(
+        `UPDATE users SET last_login = ? WHERE email = ?`,
+        [ts, log.email]
+      ).catch(() => {});
+    }
+
+    return true;
+  } catch (err: any) {
+    console.error("[MySQL] Error saving login log:", err?.message || err);
+    return false;
+  }
+}
+
+export async function loadLoginLogsFromMySQL(limit = 100): Promise<any[]> {
+  try {
+    const p = await getMySQLPool();
+    if (!p) return [];
+
+    // Ensure table exists
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS login_logs (
+        id VARCHAR(64) PRIMARY KEY,
+        email VARCHAR(191) NOT NULL,
+        name VARCHAR(100) NULL,
+        user_id VARCHAR(191) NULL,
+        picture VARCHAR(255) NULL,
+        status ENUM('Success', 'Failed_Unauthorized', 'Failed') DEFAULT 'Success',
+        ip_address VARCHAR(45) NULL,
+        user_agent TEXT NULL,
+        provider VARCHAR(50) DEFAULT 'Google OAuth',
+        failure_reason VARCHAR(255) NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_login_email (email),
+        INDEX idx_login_timestamp (timestamp),
+        INDEX idx_login_status (status)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `).catch(() => {});
+
+    const [rows]: any = await p.query(
+      `SELECT id, email, name, user_id as userId, picture, status, ip_address as ipAddress, user_agent as userAgent, provider, failure_reason as failureReason, timestamp FROM login_logs ORDER BY timestamp DESC LIMIT ?`,
+      [limit]
+    );
+    return rows || [];
+  } catch (err: any) {
+    console.error("[MySQL] Error loading login logs:", err?.message || err);
+    return [];
+  }
+}
+
+export async function clearLoginLogsInMySQL(): Promise<boolean> {
+  try {
+    const p = await getMySQLPool();
+    if (!p) return false;
+    await p.query("DELETE FROM login_logs");
+    return true;
+  } catch (err: any) {
+    console.error("[MySQL] Error clearing login logs:", err?.message || err);
+    return false;
+  }
+}
+
