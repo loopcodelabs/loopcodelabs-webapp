@@ -1,5 +1,13 @@
 import path from "path";
-import { saveConfigToMySQL, loadConfigFromMySQL, saveAnalyticsToMySQL, loadAnalyticsFromMySQL } from "./db.js";
+import { 
+  saveConfigToMySQL, 
+  loadConfigFromMySQL, 
+  saveAnalyticsToMySQL, 
+  loadAnalyticsFromMySQL,
+  recordLoginLogToMySQL,
+  loadLoginLogsFromMySQL,
+  clearLoginLogsInMySQL
+} from "./db.js";
 import type {
   VisitorRecord,
   SessionRecord,
@@ -1128,6 +1136,72 @@ export const analyticsStore = {
       );
     }
     saveAnalyticsData();
+    return true;
+  },
+
+  recordLoginLog: (data: {
+    email: string;
+    name?: string;
+    userId?: string;
+    picture?: string;
+    status: "Success" | "Failed_Unauthorized" | "Failed";
+    ipAddress?: string;
+    userAgent?: string;
+    provider?: string;
+    failureReason?: string;
+  }) => {
+    const logRecord = {
+      id: `login_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      email: data.email || "Unknown",
+      name: data.name || "User",
+      userId: data.userId || null,
+      picture: data.picture || null,
+      status: data.status || "Success",
+      ipAddress: data.ipAddress || "127.0.0.1",
+      userAgent: data.userAgent || "",
+      provider: data.provider || "Google OAuth",
+      failureReason: data.failureReason || null,
+      timestamp: new Date().toISOString()
+    };
+
+    if (!Array.isArray((db as any).loginLogs)) {
+      (db as any).loginLogs = [];
+    }
+    (db as any).loginLogs.unshift(logRecord);
+    if ((db as any).loginLogs.length > 200) {
+      (db as any).loginLogs = (db as any).loginLogs.slice(0, 200);
+    }
+
+    saveAnalyticsData();
+
+    // Persist to MySQL database asynchronously
+    recordLoginLogToMySQL(logRecord).catch((err) => {
+      console.error("[analyticsStore] Error forwarding login log to MySQL:", err);
+    });
+
+    return logRecord;
+  },
+
+  getLoginLogs: async (limit = 100) => {
+    try {
+      const mysqlLogs = await loadLoginLogsFromMySQL(limit);
+      if (Array.isArray(mysqlLogs) && mysqlLogs.length > 0) {
+        return mysqlLogs;
+      }
+    } catch (e) {
+      // Fallback to in-memory store
+    }
+
+    if (Array.isArray((db as any).loginLogs)) {
+      return (db as any).loginLogs.slice(0, limit);
+    }
+    return [];
+  },
+
+  clearLoginLogs: async () => {
+    (db as any).loginLogs = [];
+    saveAnalyticsData();
+    await clearLoginLogsInMySQL();
     return true;
   }
 };

@@ -2,15 +2,30 @@ import "./server/env.js";
 import express from "express";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { analyticsStore } from "./server/analyticsStore.js";
 import { loadConfigFromMySQL } from "./server/db.js";
 
 export const app = express();
 
+// Generate a process-unique random boot key so redeployments immediately invalidate old sessions if JWT_SECRET isn't explicitly set
+const SERVER_BOOT_ID = crypto.randomBytes(16).toString("hex");
+const getJwtSecret = (): string => {
+  return process.env.JWT_SECRET || `secure_boot_key_${SERVER_BOOT_ID}`;
+};
+
 // Trust reverse proxy headers (crucial for Cloud Run, Vercel, and custom domains)
 app.set("trust proxy", true);
 app.use(express.json());
+
+// GLOBAL SECURITY MIDDLEWARE: Prevent Vercel / Edge CDN from caching any API responses or Set-Cookie headers
+app.use(["/api", "/auth"], (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private, max-age=0, s-maxage=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
 
 // ==========================================
 // WEBSITE CONFIGURATION REST APIS
@@ -325,13 +340,32 @@ app.get("/api/auth/google/url", (req, res) => {
 // API Route: Callback Handler
 app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
   const { code } = req.query;
+  const clientIp = (req.headers["x-forwarded-for"] as string) || req.ip || "127.0.0.1";
+  const userAgent = (req.headers["user-agent"] as string) || "";
+
   if (!code) {
+    analyticsStore.recordLoginLog({
+      email: "Unknown",
+      status: "Failed",
+      ipAddress: clientIp,
+      userAgent,
+      provider: "Google OAuth",
+      failureReason: "No authorization code provided in callback query"
+    });
     return res.status(400).send("No authorization code provided");
   }
 
   const redirectUri = getRedirectUri(req);
 
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    analyticsStore.recordLoginLog({
+      email: "Unknown",
+      status: "Failed",
+      ipAddress: clientIp,
+      userAgent,
+      provider: "Google OAuth",
+      failureReason: "Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET environment variables"
+    });
     return res.status(500).send(`
       <html>
         <head>
@@ -403,6 +437,18 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
       const userEmail = (profile.email || "").toLowerCase();
 
       if (!userEmail || !allowedList.includes(userEmail)) {
+        analyticsStore.recordLoginLog({
+          email: profile.email || "Unknown",
+          name: profile.name,
+          userId: profile.id,
+          picture: profile.picture,
+          status: "Failed_Unauthorized",
+          ipAddress: clientIp,
+          userAgent,
+          provider: "Google OAuth",
+          failureReason: "Access denied. Account email is not authorized in ALLOWED_EMAILS."
+        });
+
         return res.status(403).send(`
           <html>
             <head>
@@ -474,18 +520,34 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
       }
     }
 
-    const jwtSecret = process.env.JWT_SECRET || "fallback_secret";
-    const token = jwt.sign(profile, jwtSecret, { expiresIn: "7d" });
+    // Record successful login in database
+    analyticsStore.recordLoginLog({
+      email: profile.email,
+      name: profile.name,
+      userId: profile.id,
+      picture: profile.picture,
+      status: "Success",
+      ipAddress: clientIp,
+      userAgent,
+      provider: "Google OAuth"
+    });
 
-    // Set cookie as security best practice & sameSite none for iframe compatibility
+    const jwtSecret = getJwtSecret();
+    const token = jwt.sign(
+      { ...profile, iat_ts: Date.now() }, 
+      jwtSecret, 
+      { expiresIn: "1h" }
+    );
+
+    // Set cookie as a true browser session cookie (no maxAge/expires) so closing the browser destroys it immediately
     res.cookie("session_token", token, {
       secure: true,
       sameSite: "none",
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      path: "/"
     });
 
-    // Send success message to parent window and close popup
+    // Send success message to parent window with targetOrigin sanitization
     res.send(`
       <html>
         <head>
@@ -521,15 +583,16 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
         <body>
           <div class="spinner"></div>
           <h2>Authenticated Successfully!</h2>
-          <p>Connecting to AI Studio...</p>
+          <p>Connecting...</p>
           <script>
             try {
               if (window.opener) {
+                var targetOrigin = window.location.origin;
                 window.opener.postMessage({ 
                   type: 'OAUTH_AUTH_SUCCESS', 
                   token: ${JSON.stringify(token)}, 
                   user: ${JSON.stringify(profile)} 
-                }, '*');
+                }, targetOrigin);
                 window.close();
               } else {
                 window.location.href = '/';
@@ -544,12 +607,26 @@ app.get(["/auth/callback", "/auth/callback/"], async (req, res) => {
     `);
   } catch (error: any) {
     console.error("Auth error:", error);
+
+    analyticsStore.recordLoginLog({
+      email: "Unknown",
+      status: "Failed",
+      ipAddress: clientIp,
+      userAgent,
+      provider: "Google OAuth",
+      failureReason: error.message || "Authentication execution error"
+    });
+
     res.status(500).send(`Authentication failed: ${error.message}`);
   }
 });
 
 // API Route: Get current user
 app.get("/api/auth/me", (req, res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private, max-age=0, s-maxage=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   try {
     let token = req.headers.authorization?.split(" ")[1];
     
@@ -573,7 +650,7 @@ app.get("/api/auth/me", (req, res) => {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const jwtSecret = process.env.JWT_SECRET || "fallback_secret";
+    const jwtSecret = getJwtSecret();
     const decoded: any = jwt.verify(token, jwtSecret);
 
     const allowedEmailsEnv = process.env.ALLOWED_EMAILS || process.env.ADMIN_EMAILS || "";
@@ -597,12 +674,36 @@ app.get("/api/auth/me", (req, res) => {
 
 // API Route: Logout
 app.post("/api/auth/logout", (req, res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
   res.clearCookie("session_token", {
     secure: true,
     sameSite: "none",
-    httpOnly: true
+    httpOnly: true,
+    path: "/"
   });
+  res.setHeader("Set-Cookie", "session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None");
   res.json({ success: true });
+});
+
+// API Route: Get Database Login Activity Logs
+app.get("/api/admin/login-logs", async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 100;
+    const logs = await analyticsStore.getLoginLogs(limit);
+    res.json({ success: true, logs });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API Route: Clear Login Activity Logs
+app.post("/api/admin/login-logs/clear", async (req, res) => {
+  try {
+    await analyticsStore.clearLoginLogs();
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Google Search Console dynamic ownership verification (HTML file method)

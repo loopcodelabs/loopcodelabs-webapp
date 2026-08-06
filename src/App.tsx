@@ -31,6 +31,9 @@ export default function App() {
   const theme = cmsTheme.mode || "dark";
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [sessionExpiredNotice, setSessionExpiredNotice] = useState<boolean>(false);
+
+  const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes inactivity timeout
 
   const [showLoader, setShowLoader] = useState<boolean>(() => {
     const played = safeSessionStorage.getItem("preloader-played");
@@ -39,28 +42,60 @@ export default function App() {
 
   const [currentHash, setCurrentHash] = useState(window.location.hash || "#");
 
-  // Fetch current user from server (using either token in localStorage or cookie)
+  // Fetch current user from server (using token in sessionStorage or cookie)
   const fetchCurrentUser = async (tokenOverride?: string) => {
     try {
-      const activeToken = tokenOverride || safeLocalStorage.getItem("auth_token");
-      const headers: HeadersInit = {};
-      if (activeToken) {
-        headers["Authorization"] = `Bearer ${activeToken}`;
+      // Purge any legacy localStorage auth data from previous app versions
+      safeLocalStorage.removeItem("auth_token");
+      safeLocalStorage.removeItem("admin_last_activity");
+
+      const activeToken = tokenOverride || safeSessionStorage.getItem("auth_token");
+      if (!activeToken) {
+        setUser(null);
+        setAuthLoading(false);
+        return;
       }
+
+      // Check if session expired due to 5 minutes of inactivity before calling server
+      const lastActivity = safeSessionStorage.getItem("admin_last_activity");
+      if (lastActivity) {
+        const elapsed = Date.now() - Number(lastActivity);
+        if (elapsed >= INACTIVITY_TIMEOUT_MS) {
+          safeSessionStorage.removeItem("auth_token");
+          safeSessionStorage.removeItem("admin_last_activity");
+          setUser(null);
+          setSessionExpiredNotice(true);
+          setAuthLoading(false);
+          return;
+        }
+      }
+
+      const headers: HeadersInit = {
+        Authorization: `Bearer ${activeToken}`
+      };
       
       const res = await fetch("/api/auth/me", { headers });
       if (res.ok) {
         const data = await res.json();
-        setUser(data.user);
-      } else {
-        // If not ok, clear local token if any
-        if (!tokenOverride) {
-          safeLocalStorage.removeItem("auth_token");
+        if (data && data.user) {
+          setUser(data.user);
+          safeSessionStorage.setItem("admin_last_activity", Date.now().toString());
+          setSessionExpiredNotice(false);
+        } else {
+          safeSessionStorage.removeItem("auth_token");
+          safeSessionStorage.removeItem("admin_last_activity");
           setUser(null);
         }
+      } else {
+        safeSessionStorage.removeItem("auth_token");
+        safeSessionStorage.removeItem("admin_last_activity");
+        setUser(null);
       }
     } catch (err) {
       console.error("Error fetching current user:", err);
+      safeSessionStorage.removeItem("auth_token");
+      safeSessionStorage.removeItem("admin_last_activity");
+      setUser(null);
     } finally {
       setAuthLoading(false);
     }
@@ -88,8 +123,10 @@ export default function App() {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
         const { token, user: profile } = event.data;
         if (token) {
-          safeLocalStorage.setItem("auth_token", token);
+          safeSessionStorage.setItem("auth_token", token);
         }
+        safeSessionStorage.setItem("admin_last_activity", Date.now().toString());
+        setSessionExpiredNotice(false);
         if (profile) {
           setUser(profile);
         } else {
@@ -102,6 +139,7 @@ export default function App() {
   }, []);
 
   const login = async () => {
+    setSessionExpiredNotice(false);
     try {
       let url = "";
 
@@ -162,10 +200,81 @@ export default function App() {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
+      safeSessionStorage.removeItem("auth_token");
+      safeSessionStorage.removeItem("admin_last_activity");
       safeLocalStorage.removeItem("auth_token");
+      safeLocalStorage.removeItem("admin_last_activity");
+      try {
+        document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      } catch (e) {
+        // ignore
+      }
       setUser(null);
     }
   };
+
+  // 5-Minute Inactivity Session Timeout Tracking
+  useEffect(() => {
+    if (!user) return;
+
+    if (!safeSessionStorage.getItem("admin_last_activity")) {
+      safeSessionStorage.setItem("admin_last_activity", Date.now().toString());
+    }
+
+    const handleInactivityLogout = async () => {
+      await logout();
+      safeSessionStorage.removeItem("admin_last_activity");
+      setSessionExpiredNotice(true);
+    };
+
+    const handleActivity = () => {
+      const now = Date.now();
+      const last = Number(safeSessionStorage.getItem("admin_last_activity") || now);
+
+      if (now - last >= INACTIVITY_TIMEOUT_MS) {
+        handleInactivityLogout();
+        return;
+      }
+
+      // Throttle sessionStorage updates to max once every 2 seconds
+      if (now - last > 2000) {
+        safeSessionStorage.setItem("admin_last_activity", now.toString());
+      }
+    };
+
+    const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart", "click"];
+    events.forEach((evt) => window.addEventListener(evt, handleActivity, { passive: true }));
+
+    // Check every 5 seconds for background inactivity expiration
+    const intervalId = setInterval(() => {
+      const now = Date.now();
+      const last = Number(safeSessionStorage.getItem("admin_last_activity") || now);
+      if (now - last >= INACTIVITY_TIMEOUT_MS) {
+        handleInactivityLogout();
+      }
+    }, 5000);
+
+    // Check when user switches back to this tab
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        const now = Date.now();
+        const last = Number(safeSessionStorage.getItem("admin_last_activity") || now);
+        if (now - last >= INACTIVITY_TIMEOUT_MS) {
+          handleInactivityLogout();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleVisibilityChange);
+
+    return () => {
+      events.forEach((evt) => window.removeEventListener(evt, handleActivity));
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleVisibilityChange);
+    };
+  }, [user]);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -283,9 +392,21 @@ export default function App() {
                 Authentication Required
               </h2>
 
-              <p className="text-xs text-zinc-400 leading-relaxed mb-8">
+              <p className="text-xs text-zinc-400 leading-relaxed mb-6">
                 Access to the loopCode Labs CMS Admin Console is restricted to authorized administrative accounts only. Please authenticate with an approved Google account.
               </p>
+
+              {sessionExpiredNotice && (
+                <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-left flex items-start gap-3 shadow-lg">
+                  <svg className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div>
+                    <span className="font-bold block text-amber-200 mb-0.5">Session Terminated (Inactivity)</span>
+                    Your admin session was automatically logged out due to 5 minutes of inactivity. Please log in again to continue.
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-3">
                 <button
