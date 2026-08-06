@@ -83,24 +83,24 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ENV_NAME: "staging"
 
-  deploy_prod:
-    name: Deploy to Production Environment
-    needs: validate
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    environment: prod
+  # deploy_prod:
+  #   name: Deploy to Production Environment
+  #   needs: validate
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   environment: prod
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
 
-      # PLACEHOLDER: Replace this section with your production deploy steps
-      - name: Deploy to Prod
-        run: |
-          echo "Deploying to PRODUCTION..."
-          echo "Initiating zero-downtime rolling update..."
-          # Insert production deployment commands here
-          echo "Production Deployment successful!"
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ENV_NAME: "production"
+  #     # PLACEHOLDER: Replace this section with your production deploy steps
+  #     - name: Deploy to Prod
+  #       run: |
+  #         echo "Deploying to PRODUCTION..."
+  #         echo "Initiating zero-downtime rolling update..."
+  #         # Insert production deployment commands here
+  #         echo "Production Deployment successful!"
+  #       env:
+  #         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  #         ENV_NAME: "production"

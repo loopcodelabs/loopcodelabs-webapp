@@ -251,10 +251,10 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
                 </div>
                 <div className="space-y-1.5 mt-auto relative z-10">
                   <h3 className="font-sans font-black text-xl sm:text-2xl text-text-primary group-hover:text-accent-content tracking-tight leading-none transition-colors duration-300">
-                    Innovation
+                    {values[0].title}
                   </h3>
                   <p className="text-text-secondary group-hover:text-accent-content/90 text-xs sm:text-sm leading-relaxed font-sans transition-colors duration-300">
-                    We build with tomorrow's tools, today — so your business stays ahead, not catching up.
+                    {values[0].desc}
                   </p>
                 </div>
               </div>
@@ -278,10 +278,10 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
                 </div>
                 <div className="space-y-1.5 mt-auto relative z-10">
                   <h3 className="font-sans font-black text-xl sm:text-2xl text-text-primary group-hover:text-accent-content tracking-tight leading-none transition-colors duration-300">
-                    Transparency
+                    {values[1].title}
                   </h3>
                   <p className="text-text-secondary group-hover:text-accent-content/90 text-xs sm:text-sm leading-relaxed font-sans transition-colors duration-300">
-                    Clear reporting, honest timelines, no jargon. You always know exactly where things stand.
+                    {values[1].desc}
                   </p>
                 </div>
               </div>
@@ -305,10 +305,10 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
                 </div>
                 <div className="space-y-1.5 mt-auto relative z-10">
                   <h3 className="font-sans font-black text-xl sm:text-2xl text-text-primary group-hover:text-accent-content tracking-tight leading-none transition-colors duration-300">
-                    Results
+                    {values[2].title}
                   </h3>
                   <p className="text-text-secondary group-hover:text-accent-content/90 text-xs sm:text-sm leading-relaxed font-sans transition-colors duration-300">
-                    Vanity metrics are easy. We optimise for the numbers that actually move your business.
+                    {values[2].desc}
                   </p>
                 </div>
               </div>
@@ -332,10 +332,10 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
                 </div>
                 <div className="space-y-1.5 mt-auto relative z-10">
                   <h3 className="font-sans font-black text-xl sm:text-2xl text-text-primary group-hover:text-accent-content tracking-tight leading-none transition-colors duration-300">
-                    Partnership
+                    {values[3].title}
                   </h3>
                   <p className="text-text-secondary group-hover:text-accent-content/90 text-xs sm:text-sm leading-relaxed font-sans transition-colors duration-300">
-                    We work as an extension of your team — invested in your outcomes, not just our deliverables.
+                    {values[3].desc}
                   </p>
                 </div>
               </div>
@@ -359,10 +359,10 @@ export default function AboutLandingPage({ onBack }: AboutLandingPageProps) {
                 </div>
                 <div className="space-y-1.5 mt-auto relative z-10">
                   <h3 className="font-sans font-black text-xl sm:text-2xl text-text-primary group-hover:text-accent-content tracking-tight leading-none transition-colors duration-300">
-                    Continuous Improvement
+                    {values[4].title}
                   </h3>
                   <p className="text-text-secondary group-hover:text-accent-content/90 text-xs sm:text-sm leading-relaxed font-sans transition-colors duration-300">
-                    Launch is the start. We test, learn, and refine so performance compounds over time.
+                    {values[4].desc}
                   </p>
                 </div>
               </div>
