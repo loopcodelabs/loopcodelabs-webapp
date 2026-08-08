@@ -6,7 +6,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { analyticsStore } from "./server/analyticsStore.js";
 import { loadConfigFromMySQL } from "./server/db.js";
-import { sendEnquiryNotificationEmail, verifySmtpConnection } from "./server/emailService.js";
+import { sendEnquiryNotificationEmail, sendCustomerConfirmationEmail, renderBrandedEmailTemplate, verifySmtpConnection } from "./server/emailService.js";
 
 export const app = express();
 
@@ -232,15 +232,21 @@ app.post(["/api/analytics/lead", "/api/contact"], async (req, res) => {
   try {
     const lead = analyticsStore.recordLeadJourney(req.body);
 
-    // Dispatch email notification to hello@loopcodelabs.in via Nodemailer
-    const emailResult = await sendEnquiryNotificationEmail(lead);
+    // 1. Dispatch internal email notification to hello@loopcodelabs.in
+    const adminEmailResult = await sendEnquiryNotificationEmail(lead);
+
+    // 2. Dispatch branded customer confirmation email to client (if valid email provided)
+    let customerEmailResult = { success: false };
+    if (lead.email && lead.email.includes("@")) {
+      customerEmailResult = await sendCustomerConfirmationEmail(lead);
+    }
 
     res.json({
       success: true,
       lead,
-      emailSent: emailResult.success,
-      emailMessageId: emailResult.messageId,
-      emailError: emailResult.error || emailResult.reason
+      adminEmailSent: adminEmailResult.success,
+      customerEmailSent: customerEmailResult.success,
+      emailMessageId: adminEmailResult.messageId
     });
   } catch (err: any) {
     console.error("[API/Lead] Lead submission processing error:", err);
@@ -255,6 +261,95 @@ app.get("/api/email/verify", async (req, res) => {
     res.json(status);
   } catch (err: any) {
     res.status(500).json({ configured: false, ok: false, error: err.message });
+  }
+});
+
+// 7c. HTML Branded Email Template Live Preview Endpoint
+app.get("/api/email/preview", (req, res) => {
+  const type = (req.query.type as string) || "customer";
+  
+  if (type === "customer") {
+    const sampleHtml = renderBrandedEmailTemplate({
+      title: "We've Received Your Project Enquiry",
+      subtitle: "Thank you for getting in touch with loopCode Labs",
+      badgeText: "CONFIRMATION RECEIPT",
+      preheaderText: "Hi Alex, we have received your project enquiry and our team will get back to you shortly.",
+      contentHtml: `
+        <p style="margin: 0 0 16px 0; font-size: 16px; color: #FFFFFF; font-weight: 600;">
+          Hi Alex Mercer,
+        </p>
+
+        <p style="margin: 0 0 20px 0; color: #CBD5E1; font-size: 15px; line-height: 1.6;">
+          Thank you for reaching out to <strong>loopCode Labs</strong>! We have received your project details and our engineering team is already reviewing your requirements.
+        </p>
+
+        <div style="background-color: #0F172A; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #2BBAA5; font-weight: 700;">
+            📋 Summary of Your Submission
+          </h3>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td style="padding: 6px 0; font-size: 13px; color: #64748B; width: 120px;">Project Type:</td>
+              <td style="padding: 6px 0; font-size: 14px; font-weight: 600; color: #FFFFFF;">AI SaaS & Full-Stack Web Application</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; font-size: 13px; color: #64748B;">Contact Email:</td>
+              <td style="padding: 6px 0; font-size: 14px; color: #38BDF8;">alex.mercer@techstart.io</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; font-size: 13px; color: #64748B;">Phone:</td>
+              <td style="padding: 6px 0; font-size: 14px; color: #CBD5E1;">+91 98765 43210</td>
+            </tr>
+          </table>
+          <div style="border-top: 1px solid #1E293B; margin-top: 12px; padding-top: 12px; font-size: 13px; color: #94A3B8; line-height: 1.5;">
+            "We are looking to build an AI-powered SaaS dashboard with custom analytics, real-time sync, and OAuth integrations."
+          </div>
+        </div>
+
+        <div style="background-color: rgba(43, 186, 165, 0.05); border: 1px solid rgba(43, 186, 165, 0.2); border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700; color: #2BBAA5;">
+            ⚡ What happens next?
+          </h4>
+          <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #CBD5E1; line-height: 1.7;">
+            <li>Our technical architect will analyze your project scope.</li>
+            <li>We will schedule a discovery session or send a detailed technical estimation within <strong>24 hours</strong>.</li>
+          </ol>
+        </div>
+      `,
+      ctaText: "Explore loopCode Labs Services",
+      ctaUrl: "https://loopcodelabs.in/#services"
+    });
+    res.setHeader("Content-Type", "text/html");
+    return res.send(sampleHtml);
+  } else {
+    const sampleHtml = renderBrandedEmailTemplate({
+      title: "New Project Enquiry from Alex Mercer",
+      subtitle: "Received via website contact form on 8 Aug 2026, 02:30 PM IST",
+      badgeText: "NEW ENQUIRY",
+      preheaderText: "New project enquiry from Alex Mercer (alex.mercer@techstart.io)",
+      contentHtml: `
+        <div style="background-color: #0F172A; border: 1px solid #1E293B; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td style="padding: 8px 0; font-size: 13px; color: #64748B; width: 120px;">Client Name:</td>
+              <td style="padding: 8px 0; font-size: 15px; font-weight: 700; color: #FFFFFF;">Alex Mercer</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-size: 13px; color: #64748B;">Email Address:</td>
+              <td style="padding: 8px 0; font-size: 15px; font-weight: 600; color: #38BDF8;">alex.mercer@techstart.io</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-size: 13px; color: #64748B;">Project Type:</td>
+              <td style="padding: 8px 0; font-size: 14px; color: #F1F5F9; font-weight: 600;">Full-Stack AI Web Platform</td>
+            </tr>
+          </table>
+        </div>
+      `,
+      ctaText: "Reply to Alex Mercer",
+      ctaUrl: "mailto:alex.mercer@techstart.io"
+    });
+    res.setHeader("Content-Type", "text/html");
+    return res.send(sampleHtml);
   }
 });
 
