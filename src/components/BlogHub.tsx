@@ -31,9 +31,11 @@ export default function BlogHub({ onBack }: BlogHubProps) {
   const categories = ["ALL", "SEO", "Web Development", "Automation", "AI", "Digital Marketing", "Website Performance", "Business Growth", "Branding"];
 
   const articles: BlogArticle[] = useMemo(() => {
-    const rawList: Omit<BlogArticle, "id">[] = [
-      // === SEO CLUSTER (12 articles) ===
+    // Definitive master article per cluster topic
+    const defaultClusterArticles: BlogArticle[] = [
+      // 1. SEO CLUSTER
       {
+        id: "blog-seo",
         title: "How Technical SEO Schema Multiplies CTR on Google Search India",
         category: "SEO",
         targetKeyword: "Technical SEO Services",
@@ -45,71 +47,15 @@ export default function BlogHub({ onBack }: BlogHubProps) {
           "Validating rich results with Schema testing tools before deployment",
           "Case Study: 140% organic lead growth for Hyderabad-based enterprises"
         ],
-        keyTakeaways: ["Schema represents absolute programmatic communication.", "Directly increases rich-snippet real-estate on search.", "Improves organic mobile visibility."]
+        keyTakeaways: [
+          "Schema represents absolute programmatic communication.",
+          "Directly increases rich-snippet real-estate on search.",
+          "Improves organic mobile visibility."
+        ]
       },
+      // 2. WEB DEVELOPMENT CLUSTER
       {
-        title: "The Shift to Generative Engine Optimization (GEO) in 2026",
-        category: "SEO",
-        targetKeyword: "SEO Company Hyderabad",
-        summary: "Traditional search is evolving. Learn how to optimize your content structure so ChatGPT, Claude, and Gemini recommend your services.",
-        readTime: "6 min read",
-        outline: [
-          "What is Generative Engine Optimization (GEO) and why is it crucial?",
-          "Structuring content using conversational Q&A block elements",
-          "Authoritativeness and transparent citations as ranking signals",
-          "Aesthetic styling rules to capture AI assistant summaries"
-        ],
-        keyTakeaways: ["AI search engines prefer clear entities over raw keyword density.", "Transparent sourcing establishes trust metrics.", "Semantic layout triggers AI indexing."]
-      },
-      {
-        title: "Local SEO Secrets for Hyderabad Businesses: Dominating the Map Pack",
-        category: "SEO",
-        targetKeyword: "Local SEO Services",
-        summary: "Step-by-step optimization blueprint to secure the top slot in the Google Maps Local Pack across Telangana.",
-        readTime: "4 min read",
-        outline: [
-          "Maximizing Google Business Profile configurations and geocoding parameters",
-          "Designing high-relevance localized landing pages with localized H1 headers",
-          "Developing Hyderabad proximity content clusters",
-          "Earning citation velocity through reputable regional listing platforms"
-        ],
-        keyTakeaways: ["Proximity, relevance, and prominence remain the local core metrics.", "Local schema ties coordinates to regional business entities.", "Review velocity increases maps ranking speed."]
-      },
-      {
-        title: "Semantic Content Clusters: The Ultimate Moat Against Algorithm Updates",
-        category: "SEO",
-        targetKeyword: "SEO Services",
-        summary: "How to design a structured content architecture that establishes bulletproof topical authority in your niche.",
-        readTime: "7 min read",
-        outline: [
-          "The theory of topical authority and semantic keyword hubs",
-          "Designing parent pillar pages and children cluster links",
-          "Developing logical internal anchor linking structures",
-          "Auditing orphan pages that degrade index budgets"
-        ],
-        keyTakeaways: ["Algorithm updates penalize disconnected, surface-level content.", "Linking clusters proves subject-matter depth.", "Anchor texts must use highly descriptive variations."]
-      },
-      {
-        title: "Why Standard Keyword Stuffing is Dead: Embracing Latent Semantic Indexing",
-        category: "SEO",
-        targetKeyword: "SEO Expert",
-        summary: "Learn how modern search crawlers use vector embeddings to understand content intent without repeating exact phrases.",
-        readTime: "5 min read",
-        outline: ["Natural Language Processing (NLP) in search crawlers", "Mapping latent semantic entities related to your services", "Writing for human clarity first while retaining indexing signals", "Measuring topical relevance using competitive auditing tools"],
-        keyTakeaways: ["Search engines read concepts, not just keywords.", "Synonyms improve readability and ranking.", "High-quality write-ups naturally contain LSI terms."]
-      },
-      {
-        title: "The Ultimate Technical SEO Audit Checklist for Modern Startups",
-        category: "SEO",
-        targetKeyword: "Technical SEO",
-        summary: "Identify and resolve indexing blockers, canonical redirect loops, and server-side rendering issues today.",
-        readTime: "8 min read",
-        outline: ["Finding crawl errors using Google Search Console", "Configuring canonical tags to eliminate duplicate content penalties", "Resolving JavaScript rendering bugs on single-page apps", "Setting up absolute secure server headers"],
-        keyTakeaways: ["Crawl budget leaks directly deplete organic performance.", "Canonical tags are a mandatory directive for SPAs.", "Instant crawl resolution drives page index rate."]
-      },
-
-      // === WEB DEVELOPMENT CLUSTER (12 articles) ===
-      {
+        id: "blog-web-dev",
         title: "Custom React vs. WordPress: Choosing the Right Stack for Core Web Vitals",
         category: "Web Development",
         targetKeyword: "Website Development",
@@ -121,43 +67,15 @@ export default function BlogHub({ onBack }: BlogHubProps) {
           "Comparing bundle sizes, render-blocking scripts, and server roundtrips",
           "How site speed directly impacts digital ad campaign ROI"
         ],
-        keyTakeaways: ["Custom React code boasts sub-second loading speeds.", "Eliminating bulk plugins dramatically secures your digital assets.", "Better speeds equate to higher organic conversions."]
+        keyTakeaways: [
+          "Custom React code boasts sub-second loading speeds.",
+          "Eliminating bulk plugins dramatically secures your digital assets.",
+          "Better speeds equate to higher organic conversions."
+        ]
       },
+      // 3. AUTOMATION CLUSTER
       {
-        title: "Why Single Page Applications Need Dynamic JSON-LD Metadata",
-        category: "Web Development",
-        targetKeyword: "Web Application Development",
-        summary: "A developer's guide to ensuring client-rendered SPAs communicate seamlessly with search engine crawlers.",
-        readTime: "5 min read",
-        outline: [
-          "The challenge of client-side routing on traditional search engines",
-          "Dynamic document title and metadata updates via React state",
-          "Injecting structure schema dynamically on route transitions",
-          "Configuring server-side static fallback routes for ultimate crawlability"
-        ],
-        keyTakeaways: ["Crawlers must receive static headers on the first request.", "Dynamic meta updates guarantee accurate social sharing previews.", "Ensures correct index indexing across custom subpaths."]
-      },
-      {
-        title: "Bespoke Web Engineering: Maximizing Startup Runway with Custom Solutions",
-        category: "Web Development",
-        targetKeyword: "Custom Website Development",
-        summary: "Why pre-built templates represent a massive technical debt for growing businesses and startups.",
-        readTime: "5 min read",
-        outline: ["Evaluating long-term licensing and optimization costs", "Eliminating bloated dependencies to guarantee zero platform lock-in", "Developing bespoke feature calculators and API endpoints", "Building custom web applications that scale with user acquisition"],
-        keyTakeaways: ["Bespoke platforms allow 100% feature flexibility.", "Zero dependency bloat reduces monthly hosting requirements.", "Builds durable intellectual property assets."]
-      },
-      {
-        title: "API-First Architecture: Connecting Custom Frontends to High-Performance Databases",
-        category: "Web Development",
-        targetKeyword: "API Development",
-        summary: "How decoupling your UI from backend services optimizes app speed, developer agility, and operational security.",
-        readTime: "6 min read",
-        outline: ["Understanding RESTful and GraphQL API methodologies", "Building lightweight secure server entry points using Express v5", "Leveraging ORMs like Drizzle to query PostgreSQL with zero latency", "Implementing secure authorization headers and rate-limiting structures"],
-        keyTakeaways: ["Decoupling ensures front-end speed is completely independent of databases.", "APIs can power web, mobile, and third-party systems simultaneously.", "Secures your core databases from client-side vector attacks."]
-      },
-
-      // === AUTOMATION CLUSTER (12 articles) ===
-      {
+        id: "blog-automation",
         title: "How Hyderabad Construction Firms Streamline Client Intake via Automation",
         category: "Automation",
         targetKeyword: "Business Process Automation",
@@ -165,38 +83,19 @@ export default function BlogHub({ onBack }: BlogHubProps) {
         readTime: "5 min read",
         outline: [
           "Identifying the primary paper and manual friction points in client onboarding",
-          "Constructing automated custom estimatators and digital lead portals",
+          "Constructing automated custom estimators and digital lead portals",
           "Connecting incoming web inquiries directly to local sales directors",
           "Deploying daily automated status reports via cloud databases"
         ],
-        keyTakeaways: ["Intake automation reduces administrative overhead by 60%.", "Saves sales agents valuable manual follow-up time.", "Establishes ultimate customer transparency from day one."]
+        keyTakeaways: [
+          "Intake automation reduces administrative overhead by 60%.",
+          "Saves sales agents valuable manual follow-up time.",
+          "Establishes ultimate customer transparency from day one."
+        ]
       },
+      // 4. AI CLUSTER
       {
-        title: "The WhatsApp Cloud API Blueprint: Instant Lead Vetting Without Call Latency",
-        category: "Automation",
-        targetKeyword: "WhatsApp Automation",
-        summary: "A practical guide to triggering high-converting WhatsApp updates when a customer completes a website form.",
-        readTime: "4 min read",
-        outline: [
-          "Setting up your WhatsApp Developer Account and Meta Business Manager",
-          "Coding server-side webhooks to capture lead inquiries instantly",
-          "Drafting and obtaining approval for conversational templates",
-          "Reducing lead response time from 4 hours to under 30 seconds"
-        ],
-        keyTakeaways: ["WhatsApp boasts up to an 85% open rate compared to standard emails.", "Instant response doubles lead booking success rates.", "Automating the flow ensures zero prospects slip through."]
-      },
-      {
-        title: "Workflow Automation for Retailers: Syncing Inventory with WhatsApp Leads",
-        category: "Automation",
-        targetKeyword: "Workflow Automation",
-        summary: "How modern e-commerce and retail brands connect inventory databases directly to instant customer communication.",
-        readTime: "5 min read",
-        outline: ["Automating stock checks via custom REST APIs", "Sending real-time order updates to WhatsApp and email platforms", "Reducing human administrative typing error to absolute zero", "Triggering dynamic product up-sell sequences based on buyer profiles"],
-        keyTakeaways: ["Inventory syncing eliminates manual catalog queries.", "Instantly delights clients with secure automated tracking links.", "Improves customer lifetime value by up to 35%."]
-      },
-
-      // === AI CLUSTER (12 articles) ===
-      {
+        id: "blog-ai",
         title: "Integrating the Google GenAI SDK into Express Backends",
         category: "AI",
         targetKeyword: "AI Solutions",
@@ -208,114 +107,119 @@ export default function BlogHub({ onBack }: BlogHubProps) {
           "Configuring strict system instructions to guarantee predictable text formatting",
           "Handling API failure states with intelligent retry algorithms"
         ],
-        keyTakeaways: ["Always keep your Gemini API keys secure behind the server layer.", "Strict formatting instructions enable reliable programmatic parsing.", "Failsafe structures keep your business logic running smoothly."]
+        keyTakeaways: [
+          "Always keep your Gemini API keys secure behind the server layer.",
+          "Strict formatting instructions enable reliable programmatic parsing.",
+          "Failsafe structures keep your business logic running smoothly."
+        ]
       },
+      // 5. DIGITAL MARKETING CLUSTER
       {
-        title: "AI Chatbots vs. Automated Live Chat: Choosing the Optimal Solution",
-        category: "AI",
-        targetKeyword: "Chatbot Development",
-        summary: "How startups leverage contextual AI assistants to resolve customer issues without manual team escalation.",
-        readTime: "5 min read",
-        outline: ["Evaluating customer intent accuracy across AI models", "Connecting private business knowledge databases to your chatbot", "Designing smooth human-agent handoff triggers in the UI", "Measuring customer satisfaction metrics and automated resolve rates"],
-        keyTakeaways: ["AI Chatbots resolve up to 70% of redundant operational support tickets.", "Keeps customer service active 24/7 with zero added headcounts.", "Builds deep client engagement metrics."]
-      },
-
-      // === DIGITAL MARKETING CLUSTER (12 articles) ===
-      {
+        id: "blog-marketing",
         title: "ROI-Focused Lead Generation: Turning High-Intent Searches Into Pipe",
         category: "Digital Marketing",
         targetKeyword: "Digital Marketing",
         summary: "The exact digital marketing architecture required to build a predictable, scalable lead acquisition pipeline.",
         readTime: "5 min read",
-        outline: ["Identifying and capturing transactional, high-intent Google search phrases", "Designing landing pages focused strictly on single-action conversions", "Deploying advanced tracking systems to monitor acquisition costs", "Nurturing cold prospects with personalized performance emails"],
-        keyTakeaways: ["Vanity metrics like impressions don't pay business overheads.", "Sleek conversion forms directly maximize acquisition margins.", "Targeting exact buyer intent ensures high closing ratios."]
+        outline: [
+          "Identifying and capturing transactional, high-intent Google search phrases",
+          "Designing landing pages focused strictly on single-action conversions",
+          "Deploying advanced tracking systems to monitor acquisition costs",
+          "Nurturing cold prospects with personalized performance emails"
+        ],
+        keyTakeaways: [
+          "Vanity metrics like impressions don't pay business overheads.",
+          "Sleek conversion forms directly maximize acquisition margins.",
+          "Targeting exact buyer intent ensures high closing ratios."
+        ]
       },
-
-      // === WEBSITE PERFORMANCE CLUSTER (12 articles) ===
+      // 6. WEBSITE PERFORMANCE CLUSTER
       {
-        title: "How Sub-Second Website Loading Speeds Direct Impact Paid Campaign Conversions",
+        id: "blog-performance",
+        title: "How Sub-Second Website Loading Speeds Directly Impact Paid Campaign Conversions",
         category: "Website Performance",
         targetKeyword: "Website Performance",
         summary: "Discover the direct mathematical correlation between page loading times and cost-per-lead metric performance.",
         readTime: "4 min read",
-        outline: ["Analyzing the page abandonment rate for load times above 2 seconds", "How Google Ads Quality Scores directly penalize slow, unoptimized landing pages", "Implementing asset minification, compression, and modern next-gen image WebP formats", "Leveraging serverless edge networks to deliver content in under 100ms"],
-        keyTakeaways: ["Slow websites directly burn your monthly digital marketing budget.", "Faster load times double your ad campaign conversion rates.", "Optimizing assets drives down the cost per conversion metrics."]
+        outline: [
+          "Analyzing the page abandonment rate for load times above 2 seconds",
+          "How Google Ads Quality Scores directly penalize slow, unoptimized landing pages",
+          "Implementing asset minification, compression, and modern next-gen image WebP formats",
+          "Leveraging serverless edge networks to deliver content in under 100ms"
+        ],
+        keyTakeaways: [
+          "Slow websites directly burn your monthly digital marketing budget.",
+          "Faster load times double your ad campaign conversion rates.",
+          "Optimizing assets drives down the cost per conversion metrics."
+        ]
       },
-
-      // === BUSINESS GROWTH CLUSTER (12 articles) ===
+      // 7. BUSINESS GROWTH CLUSTER
       {
+        id: "blog-growth",
         title: "Why Local Proximity is the Next Growth Engine for B2B Services in Hyderabad",
         category: "Business Growth",
         targetKeyword: "Local SEO Hyderabad",
         summary: "A strategic overview of why dominating local search categories creates an absolute monopoly in your regional market.",
         readTime: "5 min read",
-        outline: ["Understanding the local buyer psychology and trust metrics", "How proximity optimization captures decision makers looking for physical meetings", "Building strong regional citation anchors and localized FAQ pages", "Translating local map pack dominance into stable corporate pipelines"],
-        keyTakeaways: ["Local decision-makers prefer region-expert partners.", "Proximity authority delivers the highest converting enterprise leads.", "Local dominance safeguards your brand from global market noise."]
+        outline: [
+          "Understanding local buyer psychology and trust metrics",
+          "How proximity optimization captures decision makers looking for physical meetings",
+          "Building strong regional citation anchors and localized FAQ pages",
+          "Translating local map pack dominance into stable corporate pipelines"
+        ],
+        keyTakeaways: [
+          "Local decision-makers prefer region-expert partners.",
+          "Proximity authority delivers the highest converting enterprise leads.",
+          "Local dominance safeguards your brand from global market noise."
+        ]
       },
-
-      // === BRANDING CLUSTER (12 articles) ===
+      // 8. BRANDING CLUSTER
       {
+        id: "blog-branding",
         title: "Corporate Visual Systems: Building an Elite Brand Identity that Commands Premium Pricing",
         category: "Branding",
         targetKeyword: "Branding",
         summary: "How high-contrast visual design, structured brand grids, and custom typography establish market authority.",
         readTime: "5 min read",
-        outline: ["The psychological impact of typography and negative space on brand prestige", "Constructing mathematical grid brand marks that scale perfectly to print and screens", "Designing exhaustive stylebooks that protect visual assets from fragmentation", "How visual consistency elevates perceived product value by up to 200%"],
-        keyTakeaways: ["An elite visual system functions as a durable brand moat.", "Consistency across all client touchpoints conveys absolute precision.", "Bespoke branding commands immediate customer confidence."]
+        outline: [
+          "The psychological impact of typography and negative space on brand prestige",
+          "Constructing mathematical grid brand marks that scale perfectly to print and screens",
+          "Designing exhaustive stylebooks that protect visual assets from fragmentation",
+          "How visual consistency elevates perceived product value by up to 200%"
+        ],
+        keyTakeaways: [
+          "An elite visual system functions as a durable brand moat.",
+          "Consistency across all client touchpoints conveys absolute precision.",
+          "Bespoke branding commands immediate customer confidence."
+        ]
       }
     ];
 
-    // Generate remaining entries to complete 100 list topics for ultimate compliance!
-    const resultList: BlogArticle[] = [];
-    rawList.forEach((art, idx) => {
-      resultList.push({
-        id: `blog-${idx + 1}`,
-        ...art
-      } as BlogArticle);
+    // Guarantee strictly one article per cluster topic category
+    const clusterMap = new Map<string, BlogArticle>();
+    defaultClusterArticles.forEach((art) => {
+      clusterMap.set(art.category, art);
     });
 
-    // Add remaining highly structured programmatically to reach 100 topics
-    const categoriesPool: BlogArticle["category"][] = ["SEO", "Web Development", "Automation", "AI", "Digital Marketing", "Website Performance", "Business Growth", "Branding"];
-    const keywordsPool = ["Website Development", "Web Design", "Local SEO Hyderabad", "AI Automation Company", "Digital Marketing Hyderabad", "App Development India", "Custom Software", "Enterprise Automation", "UI UX Design", "Brand Guidelines"];
-    
-    for (let i = resultList.length; i < 100; i++) {
-      const cat = categoriesPool[i % categoriesPool.length];
-      const keyword = keywordsPool[i % keywordsPool.length];
-      const topicNum = i + 1;
-      
-      resultList.push({
-        id: `blog-${topicNum}`,
-        title: `Dynamic Insights: Advanced Topic #${topicNum} on Strategic ${cat} & ${keyword}`,
-        category: cat,
-        targetKeyword: keyword,
-        summary: `Strategic analysis and operational guidelines focused on maximizing business returns leveraging advanced ${cat} and targeting key ${keyword} parameters.`,
-        readTime: `${3 + (i % 5)} min read`,
-        outline: [
-          `Introduction to advanced ${cat} theories and modern market constraints`,
-          `Practical implementation steps mapping ${keyword} variables`,
-          `Testing, validating, and optimizing results for maximum conversion`,
-          `Measuring ROI metrics and planning long-term growth loops`
-        ],
-        keyTakeaways: [
-          `${cat} performance directly defines modern business scaling limits.`,
-          `Continuous data audit secures high transactional conversion.`,
-          `Integrating secure technical frameworks yields sustainable returns.`
-        ]
+    if (cmsBlogs && cmsBlogs.length > 0) {
+      cmsBlogs.forEach((cb) => {
+        const cat = cb.category as BlogArticle["category"];
+        if (cat) {
+          clusterMap.set(cat, {
+            id: cb.id,
+            title: cb.title,
+            category: cat,
+            targetKeyword: cb.targetKeyword || "AI Automation",
+            summary: cb.summary,
+            readTime: cb.readTime || "5 min read",
+            outline: cb.outline || [],
+            keyTakeaways: cb.keyTakeaways || []
+          });
+        }
       });
     }
 
-    const cmsArticlesMapped: BlogArticle[] = cmsBlogs.map(cb => ({
-      id: cb.id,
-      title: cb.title,
-      category: cb.category as any,
-      targetKeyword: cb.targetKeyword || "AI Automation",
-      summary: cb.summary,
-      readTime: cb.readTime || "5 min read",
-      outline: cb.outline || [],
-      keyTakeaways: cb.keyTakeaways || []
-    }));
-
-    return [...cmsArticlesMapped, ...resultList];
+    return Array.from(clusterMap.values());
   }, [cmsBlogs]);
 
   const filteredArticles = useMemo(() => {
@@ -371,7 +275,7 @@ export default function BlogHub({ onBack }: BlogHubProps) {
                   The Editorial Ledger.
                 </h1>
                 <p className="text-zinc-400 text-sm sm:text-base max-w-2xl leading-relaxed">
-                  A comprehensive, high-fidelity directory of 100 structured blog articles, technical case audits, and local SEO blueprints designed to ground authority and drive predictable conversions.
+                  A curated, high-fidelity directory of strategic insights and technical blueprints—featuring one definitive master guide for each core cluster topic.
                 </p>
               </div>
 
@@ -382,7 +286,7 @@ export default function BlogHub({ onBack }: BlogHubProps) {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                   <input
                     type="text"
-                    placeholder="Search 100 authoritative topics (e.g. Hyderabad, Local SEO, Next.js, Automation)..."
+                    placeholder="Search topic clusters (e.g. SEO, Web Development, AI, Automation)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-zinc-900/80 border border-zinc-800 focus:border-accent text-white text-xs sm:text-sm px-11 py-3.5 rounded-xl outline-none transition-all placeholder:text-zinc-500 font-sans"
@@ -414,7 +318,7 @@ export default function BlogHub({ onBack }: BlogHubProps) {
 
               {/* Articles Counter */}
               <div className="flex items-center justify-between text-xs font-mono text-zinc-500 pb-2 border-b border-zinc-900">
-                <span>SHOWING {filteredArticles.length} OF 100 AUTHORITATIVE TOPICS</span>
+                <span>SHOWING {filteredArticles.length} OF {articles.length} CLUSTER TOPICS</span>
                 <span className="text-accent font-bold">[ PRE-INDEXED & GEO AUDITED ]</span>
               </div>
 

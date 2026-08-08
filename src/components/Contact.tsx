@@ -9,7 +9,7 @@ export default function Contact() {
   const { siteSettings } = useWebsite();
   const contactEmail = siteSettings?.contactEmail || "hello@loopcodelabs.in";
   const contactPhone = siteSettings?.contactPhone || "+91 6305178805";
-  const contactAddress = siteSettings?.contactAddress || "Jubilee Hills, Road No 36, Hyderabad, India";
+  const contactAddress = siteSettings?.contactAddress || "Hyderabad, India";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

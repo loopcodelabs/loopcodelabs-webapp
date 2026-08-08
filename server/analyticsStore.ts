@@ -294,7 +294,7 @@ const defaultWebsiteConfig = {
     agencyName: "loopCode Labs",
     contactEmail: "hello@loopcodelabs.in",
     contactPhone: "+91 6305178805",
-    contactAddress: "Jubilee Hills, Road No 36, Hyderabad, India",
+    contactAddress: "Hyderabad, India",
     newsletterSuccessCount: 1480,
     budgetOptions: ["$5k - $15k", "$15k - $35k", "$35k - $75k", "$75k+ Enterprise"]
   },

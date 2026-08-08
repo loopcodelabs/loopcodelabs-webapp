@@ -335,7 +335,7 @@ export default function Hero() {
         >
           <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
           <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-white uppercase font-mono">
-            AI ENABLED DIGITAL AGENCY
+            AI ENABLED SOFTWARE LABS
           </span>
         </motion.div>
 
