@@ -76,7 +76,7 @@ export const CookieConsent: React.FC = () => {
                 </span>
               </h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                We use privacy-friendly local analytics to measure page usage and improve our digital agency services. No personal identifiers are sold.
+                We use privacy-friendly local analytics to measure page usage and improve our Software Labs services. No personal identifiers are sold.
               </p>
             </div>
           </div>

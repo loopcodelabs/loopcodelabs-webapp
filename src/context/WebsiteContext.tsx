@@ -321,7 +321,7 @@ const defaultServices: Service[] = [
 
 const defaultBlogs: BlogArticle[] = [
   {
-    id: "b1",
+    id: "blog-seo",
     title: "How Technical SEO Schema Multiplies CTR on Google Search India",
     category: "SEO",
     targetKeyword: "Technical SEO Services",
@@ -337,36 +337,116 @@ const defaultBlogs: BlogArticle[] = [
     publishedAt: "2026-07-15"
   },
   {
-    id: "b2",
-    title: "The Shift to Generative Engine Optimization (GEO) in 2026",
-    category: "SEO",
-    targetKeyword: "SEO Company Hyderabad",
-    summary: "Traditional search is evolving. Learn how to optimize your content structure so ChatGPT, Claude, and Gemini recommend your services.",
+    id: "blog-web-dev",
+    title: "Custom React vs. WordPress: Choosing the Right Stack for Core Web Vitals",
+    category: "Web Development",
+    targetKeyword: "Website Development",
+    summary: "Evaluate performance, load speeds, security, and long-term maintenance costs of React applications versus generic templated platforms.",
     readTime: "6 min read",
     outline: [
-      "What is Generative Engine Optimization (GEO) and why is it crucial?",
-      "Structuring content using conversational Q&A block elements",
-      "Authoritativeness and transparent citations as ranking signals",
-      "Aesthetic styling rules to capture AI assistant summaries"
+      "Why traditional template builders degrade Core Web Vitals and loading speeds",
+      "Engineering lightweight custom client experiences with React and Vite",
+      "Comparing bundle sizes, render-blocking scripts, and server roundtrips",
+      "How site speed directly impacts digital ad campaign ROI"
     ],
-    keyTakeaways: ["AI search engines prefer clear entities over raw keyword density.", "Transparent sourcing establishes trust metrics.", "Semantic layout triggers AI indexing."],
+    keyTakeaways: ["Custom React code boasts sub-second loading speeds.", "Eliminating bulk plugins dramatically secures your digital assets.", "Better speeds equate to higher organic conversions."],
     publishedAt: "2026-07-14"
   },
   {
-    id: "b3",
-    title: "Why Standard Keyword Stuffing is Dead: Embracing Latent Semantic Indexing",
-    category: "SEO",
-    targetKeyword: "SEO Expert",
-    summary: "Learn how modern search crawlers use vector embeddings to understand content intent without repeating exact phrases.",
+    id: "blog-automation",
+    title: "How Hyderabad Construction Firms Streamline Client Intake via Automation",
+    category: "Automation",
+    targetKeyword: "Business Process Automation",
+    summary: "Discover how real estate and construction enterprises eliminate administrative bottlenecks using automated CRM pipelines.",
     readTime: "5 min read",
     outline: [
-      "Natural Language Processing (NLP) in search crawlers",
-      "Mapping latent semantic entities related to your services",
-      "Writing for human clarity first while retaining indexing signals",
-      "Measuring topical relevance using competitive auditing tools"
+      "Identifying the primary paper and manual friction points in client onboarding",
+      "Constructing automated custom estimators and digital lead portals",
+      "Connecting incoming web inquiries directly to local sales directors",
+      "Deploying daily automated status reports via cloud databases"
     ],
-    keyTakeaways: ["Search engines read concepts, not just keywords.", "Synonyms improve readability and ranking.", "High-quality write-ups naturally contain LSI terms."],
+    keyTakeaways: ["Intake automation reduces administrative overhead by 60%.", "Saves sales agents valuable manual follow-up time.", "Establishes ultimate customer transparency from day one."],
     publishedAt: "2026-07-13"
+  },
+  {
+    id: "blog-ai",
+    title: "Integrating the Google GenAI SDK into Express Backends",
+    category: "AI",
+    targetKeyword: "AI Solutions",
+    summary: "A detailed coding guide to deploying Gemini models server-side, protecting API keys, and handling responses.",
+    readTime: "6 min read",
+    outline: [
+      "Setting up the modern @google/genai TypeScript SDK safely",
+      "Constructing secure, rate-limited server endpoints in Express",
+      "Configuring strict system instructions to guarantee predictable text formatting",
+      "Handling API failure states with intelligent retry algorithms"
+    ],
+    keyTakeaways: ["Always keep your Gemini API keys secure behind the server layer.", "Strict formatting instructions enable reliable programmatic parsing.", "Failsafe structures keep your business logic running smoothly."],
+    publishedAt: "2026-07-12"
+  },
+  {
+    id: "blog-marketing",
+    title: "ROI-Focused Lead Generation: Turning High-Intent Searches Into Pipe",
+    category: "Digital Marketing",
+    targetKeyword: "Digital Marketing",
+    summary: "The exact digital marketing architecture required to build a predictable, scalable lead acquisition pipeline.",
+    readTime: "5 min read",
+    outline: [
+      "Identifying and capturing transactional, high-intent Google search phrases",
+      "Designing landing pages focused strictly on single-action conversions",
+      "Deploying advanced tracking systems to monitor acquisition costs",
+      "Nurturing cold prospects with personalized performance emails"
+    ],
+    keyTakeaways: ["Vanity metrics like impressions don't pay business overheads.", "Sleek conversion forms directly maximize acquisition margins.", "Targeting exact buyer intent ensures high closing ratios."],
+    publishedAt: "2026-07-11"
+  },
+  {
+    id: "blog-performance",
+    title: "How Sub-Second Website Loading Speeds Directly Impact Paid Campaign Conversions",
+    category: "Website Performance",
+    targetKeyword: "Website Performance",
+    summary: "Discover the direct mathematical correlation between page loading times and cost-per-lead metric performance.",
+    readTime: "4 min read",
+    outline: [
+      "Analyzing the page abandonment rate for load times above 2 seconds",
+      "How Google Ads Quality Scores directly penalize slow, unoptimized landing pages",
+      "Implementing asset minification, compression, and modern next-gen image WebP formats",
+      "Leveraging serverless edge networks to deliver content in under 100ms"
+    ],
+    keyTakeaways: ["Slow websites directly burn your monthly digital marketing budget.", "Faster load times double your ad campaign conversion rates.", "Optimizing assets drives down the cost per conversion metrics."],
+    publishedAt: "2026-07-10"
+  },
+  {
+    id: "blog-growth",
+    title: "Why Local Proximity is the Next Growth Engine for B2B Services in Hyderabad",
+    category: "Business Growth",
+    targetKeyword: "Local SEO Hyderabad",
+    summary: "A strategic overview of why dominating local search categories creates an absolute monopoly in your regional market.",
+    readTime: "5 min read",
+    outline: [
+      "Understanding local buyer psychology and trust metrics",
+      "How proximity optimization captures decision makers looking for physical meetings",
+      "Building strong regional citation anchors and localized FAQ pages",
+      "Translating local map pack dominance into stable corporate pipelines"
+    ],
+    keyTakeaways: ["Local decision-makers prefer region-expert partners.", "Proximity authority delivers the highest converting enterprise leads.", "Local dominance safeguards your brand from global market noise."],
+    publishedAt: "2026-07-09"
+  },
+  {
+    id: "blog-branding",
+    title: "Corporate Visual Systems: Building an Elite Brand Identity that Commands Premium Pricing",
+    category: "Branding",
+    targetKeyword: "Branding",
+    summary: "How high-contrast visual design, structured brand grids, and custom typography establish market authority.",
+    readTime: "5 min read",
+    outline: [
+      "The psychological impact of typography and negative space on brand prestige",
+      "Constructing mathematical grid brand marks that scale perfectly to print and screens",
+      "Designing exhaustive stylebooks that protect visual assets from fragmentation",
+      "How visual consistency elevates perceived product value by up to 200%"
+    ],
+    keyTakeaways: ["An elite visual system functions as a durable brand moat.", "Consistency across all client touchpoints conveys absolute precision.", "Bespoke branding commands immediate customer confidence."],
+    publishedAt: "2026-07-08"
   }
 ];
 
@@ -516,8 +596,8 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return {
       agencyName: "loopCode Labs",
       contactEmail: "hello@loopcodelabs.in",
-      contactPhone: "+91 90000 12345",
-      contactAddress: "Jubilee Hills, Road No 36, Hyderabad, India",
+      contactPhone: "+91 6305178805",
+      contactAddress: "Hyderabad, India",
       newsletterSuccessCount: 1480,
       budgetOptions: defaultBudgetOptions
     };
@@ -790,8 +870,8 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const defaultSettings = {
       agencyName: "loopCode Labs",
       contactEmail: "hello@loopcodelabs.in",
-      contactPhone: "+91 90000 12345",
-      contactAddress: "Jubilee Hills, Road No 36, Hyderabad, India",
+      contactPhone: "+91 6305178805",
+      contactAddress: "Hyderabad, India",
       newsletterSuccessCount: 1480,
       budgetOptions: defaultBudgetOptions
     };

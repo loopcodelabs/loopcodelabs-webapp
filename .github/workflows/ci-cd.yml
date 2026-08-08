@@ -19,12 +19,12 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # PLACEHOLDER: Replace this section with your hosting provider's deploy step
       # Example: Google Cloud Run, AWS Elastic Beanstalk, Vercel, or custom VPS.
@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # PLACEHOLDER: Replace this section with your staging deploy steps
       - name: Deploy to Stage
@@ -92,7 +92,7 @@ jobs:
 
   #   steps:
   #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v5
 
   #     # PLACEHOLDER: Replace this section with your production deploy steps
   #     - name: Deploy to Prod

@@ -296,7 +296,7 @@ export default function App() {
 
   // Max SEO dynamic meta/title sync
   useEffect(() => {
-    let title = "loopCode Labs | High-Fidelity Enterprise Software Lab";
+    let title = "LoopCode Labs | AI SaaS & Enterprise Software, Hyderabad";
     let desc = "Bespoke digital architecture, software development, AI automation solutions, and business consulting.";
 
     if (currentHash === "#admin") {

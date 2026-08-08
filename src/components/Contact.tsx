@@ -1,5 +1,5 @@
 import { useState, useEffect, FormEvent } from "react";
-import { Mail, MessageSquare, CheckCircle2, User, Loader2, ArrowUpRight } from "lucide-react";
+import { Mail, MessageSquare, CheckCircle2, User, Loader2, ArrowUpRight, Phone, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { safeSessionStorage } from "../utils/storage";
 import { trackLeadSubmission } from "../utils/analyticsTracker";
@@ -8,9 +8,12 @@ import { useWebsite } from "../context/WebsiteContext";
 export default function Contact() {
   const { siteSettings } = useWebsite();
   const contactEmail = siteSettings?.contactEmail || "hello@loopcodelabs.in";
+  const contactPhone = siteSettings?.contactPhone || "+91 6305178805";
+  const contactAddress = siteSettings?.contactAddress || "Hyderabad, India";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [projectType, setProjectType] = useState("landing");
   const [budget, setBudget] = useState("₹1,50,000 - ₹3,00,000");
   const [message, setMessage] = useState("");
@@ -56,7 +59,7 @@ export default function Contact() {
     trackLeadSubmission({
       name,
       email,
-      phone: "+91 Mobile",
+      phone: phone || contactPhone,
       company: projectType,
       requirements: `[Budget: ${budget}] - ${message}`
     });
@@ -71,6 +74,7 @@ export default function Contact() {
   const handleReset = () => {
     setName("");
     setEmail("");
+    setPhone("");
     setProjectType("landing");
     setBudget("₹1,50,000 - ₹3,00,000");
     setMessage("");
@@ -95,7 +99,7 @@ export default function Contact() {
           </div>
 
           <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
-            Fill out our inquiry form or send us an email directly. We review all incoming briefs and respond within 24-48 business hours.
+            Fill out our inquiry form or reach out directly via call or email. We review all incoming briefs and respond within 24 business hours.
           </p>
 
           {/* Contact Details Cards */}
@@ -104,13 +108,28 @@ export default function Contact() {
               href={`mailto:${contactEmail}`}
               className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800/80 transition-colors group"
             >
-              <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-accent transition-all">
+              <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-accent transition-all group-hover:scale-105">
                 <Mail className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] font-mono text-zinc-500 block uppercase font-bold tracking-wider">EMAIL INQUIRIES</span>
                 <span className="text-sm font-bold text-white group-hover:text-accent transition-colors">
                   {contactEmail}
+                </span>
+              </div>
+            </a>
+
+            <a
+              href={`tel:${contactPhone.replace(/\s+/g, '')}`}
+              className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800/80 transition-colors group"
+            >
+              <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-accent transition-all group-hover:scale-105">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-zinc-500 block uppercase font-bold tracking-wider">PHONE & WHATSAPP</span>
+                <span className="text-sm font-bold text-white group-hover:text-accent transition-colors">
+                  {contactPhone}
                 </span>
               </div>
             </a>
@@ -126,6 +145,20 @@ export default function Contact() {
                 </span>
               </div>
             </div>
+
+            {contactAddress && (
+              <div className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-900">
+                <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-accent">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-zinc-500 block uppercase font-bold tracking-wider">OFFICE LOCATION</span>
+                  <span className="text-xs font-bold text-zinc-300">
+                    {contactAddress}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -179,6 +212,22 @@ export default function Contact() {
                     </div>
                   </div>
 
+                  {/* Phone Number Field */}
+                  <div className="space-y-2">
+                    <label htmlFor="contact-phone" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Phone / WhatsApp Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-3.5 w-4 h-4 text-zinc-650" />
+                      <input
+                        id="contact-phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        className="w-full bg-zinc-900/30 border border-zinc-900 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-zinc-650 focus:outline-none focus:border-zinc-800 transition-all font-sans"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Project Selector */}
                     <div className="space-y-2">
@@ -196,7 +245,7 @@ export default function Contact() {
                       </select>
                     </div>
 
-                    {/* Estimated Budget Input - Always Custom Editable */}
+                    {/* Estimated Budget Input */}
                     <div className="space-y-2">
                       <label htmlFor="contact-budget" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">
                         Estimated Budget (INR)
@@ -206,7 +255,7 @@ export default function Contact() {
                         id="contact-budget"
                         value={budget}
                         onChange={(e) => setBudget(e.target.value)}
-                        placeholder="Enter the budget amount in INR"
+                        placeholder="Enter budget in INR"
                         className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-3.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-accent transition-all font-sans"
                       />
                     </div>
@@ -214,7 +263,7 @@ export default function Contact() {
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message Brief *</label>
+                    <label htmlFor="contact-message" className="text-[10px] font-bold text-zinc-400 font-mono uppercase">Message / Brief *</label>
                     <textarea
                       id="contact-message"
                       required
