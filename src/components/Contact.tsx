@@ -47,7 +47,7 @@ export default function Contact() {
     };
   }, []);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) {
       return;
@@ -55,20 +55,21 @@ export default function Contact() {
 
     setLoading(true);
 
-    // Call analytics lead tracking to link previous browsing history with lead info
-    trackLeadSubmission({
-      name,
-      email,
-      phone: phone || contactPhone,
-      company: projectType,
-      requirements: `[Budget: ${budget}] - ${message}`
-    });
-
-    // Simulate network request latency
-    setTimeout(() => {
+    try {
+      // Call analytics lead tracking & email dispatch
+      await trackLeadSubmission({
+        name,
+        email,
+        phone: phone || contactPhone,
+        company: projectType,
+        requirements: `[Budget: ${budget}] - ${message}`
+      });
+    } catch (err) {
+      console.error("Failed to post lead enquiry:", err);
+    } finally {
       setLoading(false);
       setSuccess(true);
-    }, 1500);
+    }
   };
 
   const handleReset = () => {

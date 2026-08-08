@@ -6,6 +6,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { analyticsStore } from "./server/analyticsStore.js";
 import { loadConfigFromMySQL } from "./server/db.js";
+import { sendEnquiryNotificationEmail, verifySmtpConnection } from "./server/emailService.js";
 
 export const app = express();
 
@@ -51,6 +52,41 @@ app.post("/api/config", async (req, res) => {
     res.json({ success: true, config: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Downloadable Image Inventory Excel File Endpoint
+app.get("/api/download-images-excel", (req, res) => {
+  const fileLocations = [
+    path.join(process.cwd(), "public", "website_images_inventory.xlsx"),
+    path.join(process.cwd(), "dist", "website_images_inventory.xlsx"),
+  ];
+
+  let filePath = fileLocations.find((p) => fs.existsSync(p));
+
+  if (!filePath || !fs.existsSync(filePath)) {
+    // Attempt to generate on the fly if missing
+    try {
+      const { execSync } = require("child_process");
+      execSync("npx tsx scripts/generate_excel_inventory.ts");
+      filePath = fileLocations.find((p) => fs.existsSync(p));
+    } catch (e) {
+      console.error("Error generating excel on the fly:", e);
+    }
+  }
+
+  if (filePath && fs.existsSync(filePath)) {
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="website_images_inventory.xlsx"'
+    );
+    return res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: "Image inventory Excel file not found." });
   }
 });
 
@@ -191,13 +227,34 @@ app.post("/api/analytics/performance", (req, res) => {
   }
 });
 
-// 7. Lead Journey Capture
-app.post("/api/analytics/lead", (req, res) => {
+// 7. Lead Journey Capture & Email Dispatch via Nodemailer
+app.post(["/api/analytics/lead", "/api/contact"], async (req, res) => {
   try {
     const lead = analyticsStore.recordLeadJourney(req.body);
-    res.json({ success: true, lead });
+
+    // Dispatch email notification to hello@loopcodelabs.in via Nodemailer
+    const emailResult = await sendEnquiryNotificationEmail(lead);
+
+    res.json({
+      success: true,
+      lead,
+      emailSent: emailResult.success,
+      emailMessageId: emailResult.messageId,
+      emailError: emailResult.error || emailResult.reason
+    });
   } catch (err: any) {
+    console.error("[API/Lead] Lead submission processing error:", err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// 7b. SMTP Status Verification Endpoint
+app.get("/api/email/verify", async (req, res) => {
+  try {
+    const status = await verifySmtpConnection();
+    res.json(status);
+  } catch (err: any) {
+    res.status(500).json({ configured: false, ok: false, error: err.message });
   }
 });
 
