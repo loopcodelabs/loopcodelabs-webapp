@@ -1,0 +1,31 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Transparent Background - Light Mode Favicon with High-Contrast Dark Brackets -->
+  <g>
+    <!-- Left Bracket < (Deep Dark, 90° Angle, 44px Height) -->
+    <path
+      d="M 32 78 L 10 100 L 32 122"
+      stroke="#09090B"
+      stroke-width="13"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Signature Infinity Loop Symbol ∞ (Vibrant Emerald Teal) -->
+    <path
+      d="M 100 100 C 108 81, 118 72, 128 72 C 139 72, 147 82, 147 100 C 147 118, 139 128, 128 128 C 118 128, 108 119, 100 100 C 92 81, 82 72, 72 72 C 61 72, 53 82, 53 100 C 53 118, 61 128, 72 128 C 82 128, 92 119, 100 100 Z"
+      stroke="#2BBAA5"
+      stroke-width="14"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Right Bracket > (Deep Dark, 90° Angle, 44px Height) -->
+    <path
+      d="M 168 78 L 190 100 L 168 122"
+      stroke="#09090B"
+      stroke-width="13"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>
