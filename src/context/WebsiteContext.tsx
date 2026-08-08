@@ -516,7 +516,7 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return {
       agencyName: "loopCode Labs",
       contactEmail: "hello@loopcodelabs.in",
-      contactPhone: "+91 90000 12345",
+      contactPhone: "+91 6305178805",
       contactAddress: "Jubilee Hills, Road No 36, Hyderabad, India",
       newsletterSuccessCount: 1480,
       budgetOptions: defaultBudgetOptions
@@ -790,7 +790,7 @@ export const WebsiteProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const defaultSettings = {
       agencyName: "loopCode Labs",
       contactEmail: "hello@loopcodelabs.in",
-      contactPhone: "+91 90000 12345",
+      contactPhone: "+91 6305178805",
       contactAddress: "Jubilee Hills, Road No 36, Hyderabad, India",
       newsletterSuccessCount: 1480,
       budgetOptions: defaultBudgetOptions
